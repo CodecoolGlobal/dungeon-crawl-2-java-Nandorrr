@@ -31,6 +31,14 @@ public abstract class Actor implements Drawable {
         return health;
     }
 
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getArmor() {
+        return armor;
+    }
+
     protected void setHealth(int newHealth) {
         this.health = Math.max(newHealth, 0);
     }
