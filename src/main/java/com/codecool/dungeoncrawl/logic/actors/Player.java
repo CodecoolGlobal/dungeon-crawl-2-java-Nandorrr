@@ -8,10 +8,19 @@ import java.util.List;
 
 public class Player extends Actor {
 
+    private int health;
+
+    private int damage;
+
+    private int armor;
+
     private List<Item> inventory;
 
     public Player(Cell cell) {
         super(cell);
+        this.health = ActorStats.PLAYER.health;
+        this.damage = ActorStats.PLAYER.damage;
+        this.armor = ActorStats.PLAYER.baseArmor;
         inventory = new ArrayList<>();
     }
 
