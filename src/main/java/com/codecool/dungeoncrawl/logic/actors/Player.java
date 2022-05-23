@@ -20,6 +20,10 @@ public class Player extends Actor {
         return itemCount;
     }
 
+    private void removeFromInventory(String itemName) {
+        inventory.removeIf(item -> item.getTileName().equalsIgnoreCase(itemName));
+    }
+
     public String getTileName() {
         return "player";
     }
