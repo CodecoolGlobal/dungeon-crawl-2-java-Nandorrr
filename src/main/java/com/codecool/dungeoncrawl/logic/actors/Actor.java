@@ -5,12 +5,12 @@ import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.Drawable;
 
 public abstract class Actor implements Drawable {
-    private Cell cell;
-    private int health;
-    private int damage;
-    private int armor;
+    protected Cell cell;
+    protected int health;
+    protected int damage;
+    protected int armor;
 
-    private Boolean hasKey = false;
+    protected Boolean hasKey = false;
 
     public Actor(Cell cell) {
         this.cell = cell;
@@ -47,7 +47,7 @@ public abstract class Actor implements Drawable {
         return cell.getY();
     }
 
-    public void addKey() {
+    protected void addKey() {
         this.hasKey = true;
     }
 }
