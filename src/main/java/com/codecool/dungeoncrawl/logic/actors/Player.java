@@ -8,12 +8,6 @@ import java.util.List;
 
 public class Player extends Actor {
 
-    private int health;
-
-    private int damage;
-
-    private int armor;
-
     private List<Item> inventory;
 
     public Player(Cell cell) {
@@ -22,6 +16,10 @@ public class Player extends Actor {
         this.damage = ActorStats.PLAYER.damage;
         this.armor = ActorStats.PLAYER.baseArmor;
         inventory = new ArrayList<>();
+    }
+
+    public List<Item> getInventory() {
+        return this.inventory;
     }
 
     private int countItemInInventory(String itemName) {
