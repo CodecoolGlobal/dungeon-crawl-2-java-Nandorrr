@@ -22,6 +22,9 @@ public class Main extends Application {
             map.getHeight() * Tiles.TILE_WIDTH);
     GraphicsContext context = canvas.getGraphicsContext2D();
     Label healthLabel = new Label();
+    Label damageLabel = new Label();
+    Label armorLabel = new Label();
+    Label inventoryLabel = new Label();
 
     public static void main(String[] args) {
         launch(args);
@@ -35,6 +38,15 @@ public class Main extends Application {
 
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
+
+        ui.add(new Label("Damage: "), 0, 1);
+        ui.add(damageLabel, 1, 1);
+
+        ui.add(new Label("Armor: "), 0, 2);
+        ui.add(armorLabel, 1, 2);
+
+        ui.add(new Label("Inventory: "), 0, 3);
+        ui.add(inventoryLabel, 1, 2);
 
         BorderPane borderPane = new BorderPane();
 
@@ -87,5 +99,8 @@ public class Main extends Application {
             }
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
+        damageLabel.setText("" + map.getPlayer().getDamage());
+        armorLabel.setText("" + map.getPlayer().getArmor());
+        inventoryLabel.setText("" + map.getPlayer().getInventoryContentText());
     }
 }
