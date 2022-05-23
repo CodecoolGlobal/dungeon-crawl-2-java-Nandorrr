@@ -6,7 +6,9 @@ import com.codecool.dungeoncrawl.logic.Drawable;
 
 public abstract class Actor implements Drawable {
     private Cell cell;
-    private int health = 10;
+    private int health;
+    private int damage;
+    private int armor;
 
     private Boolean hasKey = false;
 
@@ -27,6 +29,10 @@ public abstract class Actor implements Drawable {
 
     public int getHealth() {
         return health;
+    }
+
+    protected void setHealth(int newHealth) {
+        this.health = Math.max(newHealth, 0);
     }
 
     public Cell getCell() {
