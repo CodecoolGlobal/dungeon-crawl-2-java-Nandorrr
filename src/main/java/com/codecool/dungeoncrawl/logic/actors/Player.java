@@ -15,6 +15,11 @@ public class Player extends Actor {
         inventory = new ArrayList<>();
     }
 
+    private int countItemInInventory(String itemName) {
+        int itemCount = (int) inventory.stream().filter(item -> item.getTileName().equalsIgnoreCase(itemName)).count();
+        return itemCount;
+    }
+
     public String getTileName() {
         return "player";
     }
