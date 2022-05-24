@@ -110,8 +110,7 @@ public class Player extends Actor {
         for(Cell cell : surroundingCells){
             Actor enemy = cell.getActor();
             if (enemy instanceof Skeleton){
-                int hitDamage = ActorStats.PLAYER.damage;
-                enemy.getHurt(hitDamage);
+                enemy.getHurt(this.damage);
             }
         }
     }
