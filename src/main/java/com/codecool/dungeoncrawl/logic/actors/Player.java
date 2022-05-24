@@ -35,6 +35,7 @@ public class Player extends Actor {
             if (nextCellType == CellType.CLOSED_DOOR) {
                 nextCell.setType(CellType.OPEN_DOOR);
                 removeFromInventory("key");
+                removeKey();
             }
             cell.setActor(null);
             nextCell.setActor(this);
@@ -129,6 +130,10 @@ public class Player extends Actor {
 
     private void removeFromInventory(String itemName) {
         inventory.removeIf(item -> item.getTileName().equalsIgnoreCase(itemName));
+    }
+
+    private void removeKey() {
+        this.hasKey = false;
     }
 
     public String getTileName() {

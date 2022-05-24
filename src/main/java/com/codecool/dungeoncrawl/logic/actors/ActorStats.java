@@ -3,7 +3,9 @@ package com.codecool.dungeoncrawl.logic.actors;
 public enum ActorStats {
 
     PLAYER(100, 10, 20),
-    SKELETON(100, 10, 0);
+    SKELETON(100, 10, 0),
+    SCORPION(80, 20, 20),
+    OGRE(200, 30, 50);
 
     public int health;
     public int damage;
