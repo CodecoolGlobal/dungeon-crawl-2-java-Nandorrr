@@ -4,11 +4,16 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.Drawable;
 
-public abstract class Actor implements Drawable {
-    private Cell cell;
-    private int health = 10;
+import java.util.ArrayList;
+import java.util.List;
 
-    private Boolean hasKey = false;
+public abstract class Actor implements Drawable {
+    protected Cell cell;
+    protected int health;
+    protected int damage;
+    protected int armor;
+
+    protected Boolean hasKey = false;
 
     public Actor(Cell cell) {
         this.cell = cell;
@@ -25,8 +30,36 @@ public abstract class Actor implements Drawable {
         }
     }
 
+    public List<Cell> getSurroundingCells() {
+        List<Cell> surroundingCells = new ArrayList<>();
+
+        surroundingCells.add(cell.getNeighbor(0, -1)); // upper neighbor
+        surroundingCells.add(cell.getNeighbor(-1, -1)); // upper left neighbor
+        surroundingCells.add(cell.getNeighbor(1, -1)); // upper right neighbor
+        surroundingCells.add(cell.getNeighbor(0, 1)); // bottom neighbor
+        surroundingCells.add(cell.getNeighbor(-1, 1)); // bottom left neighbor
+        surroundingCells.add(cell.getNeighbor(1, 1)); // bottom right neighbor
+        surroundingCells.add(cell.getNeighbor(-1, 0)); // left neighbor
+        surroundingCells.add(cell.getNeighbor(1, 0)); // right neighbor
+        surroundingCells.add(cell.getNeighbor(0, 0)); // standing on it
+
+        return surroundingCells;
+    }
+
     public int getHealth() {
         return health;
+    }
+
+    public int getDamage() {
+        return damage;
+    }
+
+    public int getArmor() {
+        return armor;
+    }
+
+    protected void setHealth(int newHealth) {
+        this.health = Math.max(newHealth, 0);
     }
 
     public Cell getCell() {
@@ -41,7 +74,7 @@ public abstract class Actor implements Drawable {
         return cell.getY();
     }
 
-    public void addKey() {
+    protected void addKey() {
         this.hasKey = true;
     }
 }
