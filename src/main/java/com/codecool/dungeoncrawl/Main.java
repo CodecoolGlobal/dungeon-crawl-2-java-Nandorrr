@@ -3,6 +3,7 @@ package com.codecool.dungeoncrawl;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
+import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -22,6 +23,9 @@ public class Main extends Application {
             map.getHeight() * Tiles.TILE_WIDTH);
     GraphicsContext context = canvas.getGraphicsContext2D();
     Label healthLabel = new Label();
+    Label damageLabel = new Label();
+    Label armorLabel = new Label();
+    Label inventoryLabel = new Label();
 
     public static void main(String[] args) {
         launch(args);
@@ -30,11 +34,20 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane ui = new GridPane();
-        ui.setPrefWidth(200);
-        ui.setPadding(new Insets(10));
+        ui.setPrefWidth(300);
+        ui.setPadding(new Insets(20));
 
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
+
+        ui.add(new Label("Damage: "), 0, 1);
+        ui.add(damageLabel, 1, 1);
+
+        ui.add(new Label("Armor: "), 0, 2);
+        ui.add(armorLabel, 1, 2);
+
+        ui.add(new Label("Inventory: "), 0, 3);
+        ui.add(inventoryLabel, 0, 4);
 
         BorderPane borderPane = new BorderPane();
 
@@ -51,21 +64,30 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
+        Player player = map.getPlayer();
         switch (keyEvent.getCode()) {
             case UP:
-                map.getPlayer().move(0, -1);
+                player.move(0, -1);
                 refresh();
                 break;
             case DOWN:
-                map.getPlayer().move(0, 1);
+                player.move(0, 1);
                 refresh();
                 break;
             case LEFT:
-                map.getPlayer().move(-1, 0);
+                player.move(-1, 0);
                 refresh();
                 break;
             case RIGHT:
-                map.getPlayer().move(1,0);
+                player.move(1,0);
+                refresh();
+                break;
+            case F:
+                player.pickUpItem();
+                refresh();
+                break;
+            case SPACE:
+                player.hitActor();
                 refresh();
                 break;
         }
@@ -79,11 +101,16 @@ public class Main extends Application {
                 Cell cell = map.getCell(x, y);
                 if (cell.getActor() != null) {
                     Tiles.drawTile(context, cell.getActor(), x, y);
+                } else if (cell.getItem() != null) {
+                        Tiles.drawTile(context, cell.getItem(), x, y);
                 } else {
                     Tiles.drawTile(context, cell, x, y);
                 }
             }
         }
         healthLabel.setText("" + map.getPlayer().getHealth());
+        damageLabel.setText("" + map.getPlayer().getDamage());
+        armorLabel.setText("" + map.getPlayer().getArmor());
+        inventoryLabel.setText("" + map.getPlayer().getInventoryContentText());
     }
 }
