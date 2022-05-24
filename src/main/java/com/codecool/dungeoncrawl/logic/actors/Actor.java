@@ -54,6 +54,10 @@ public abstract class Actor implements Drawable {
         return damage;
     }
 
+    protected void getHurt(int damage){
+        this.health -= damage;
+    }
+
     public int getArmor() {
         return armor;
     }
@@ -77,4 +81,5 @@ public abstract class Actor implements Drawable {
     protected void addKey() {
         this.hasKey = true;
     }
+
 }
