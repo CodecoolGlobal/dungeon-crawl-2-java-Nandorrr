@@ -14,6 +14,11 @@ public class Skeleton extends Actor implements Enemy{
     }
 
     @Override
+    public void move(int dx, int dy) {
+
+    }
+
+    @Override
     public String getTileName() {
         return "skeleton";
     }
