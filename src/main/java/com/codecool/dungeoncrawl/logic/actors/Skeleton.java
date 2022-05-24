@@ -5,7 +5,7 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import java.util.List;
 import java.util.Random;
 
-public class Skeleton extends Actor{
+public class Skeleton extends Actor implements Enemy {
     public Skeleton(Cell cell) {
         super(cell);
         this.health = ActorStats.SKELETON.health;
