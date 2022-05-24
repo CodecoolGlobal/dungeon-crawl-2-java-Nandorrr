@@ -1,6 +1,7 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.items.Item;
 import com.codecool.dungeoncrawl.logic.items.armors.ChestPlate;
 import com.codecool.dungeoncrawl.logic.items.general.Key;
@@ -22,6 +23,23 @@ public class Player extends Actor {
         this.damage = ActorStats.PLAYER.damage;
         this.armor = ActorStats.PLAYER.baseArmor;
         inventory = new ArrayList<>();
+    }
+
+    @Override
+    public void move(int dx, int dy) {
+        Cell nextCell = cell.getNeighbor(dx, dy);
+        CellType nextCellType = nextCell.getType();
+        if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null)
+                || nextCellType == CellType.OPEN_DOOR
+                || (nextCellType == CellType.CLOSED_DOOR && hasKey)) {
+            if (nextCellType == CellType.CLOSED_DOOR) {
+                nextCell.setType(CellType.OPEN_DOOR);
+                removeFromInventory("key");
+            }
+            cell.setActor(null);
+            nextCell.setActor(this);
+            cell = nextCell;
+        }
     }
 
     public List<Item> getInventory() {

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Actor implements Drawable {
+
     protected Cell cell;
     protected int health;
     protected int damage;
@@ -20,15 +21,7 @@ public abstract class Actor implements Drawable {
         this.cell.setActor(this);
     }
 
-    public void move(int dx, int dy) {
-        Cell nextCell = cell.getNeighbor(dx, dy);
-        CellType nextCellType = nextCell.getType();
-        if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null) || (nextCellType == CellType.DOOR && hasKey)) {
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;
-        }
-    }
+    public abstract void move(int dx, int dy);
 
     public List<Cell> getSurroundingCells() {
         List<Cell> surroundingCells = new ArrayList<>();
@@ -77,4 +70,5 @@ public abstract class Actor implements Drawable {
     protected void addKey() {
         this.hasKey = true;
     }
+
 }
