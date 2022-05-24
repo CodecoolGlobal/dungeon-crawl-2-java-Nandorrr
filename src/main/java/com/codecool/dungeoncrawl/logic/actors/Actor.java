@@ -4,6 +4,9 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.Drawable;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public abstract class Actor implements Drawable {
     protected Cell cell;
     protected int health;
@@ -25,6 +28,22 @@ public abstract class Actor implements Drawable {
             nextCell.setActor(this);
             cell = nextCell;
         }
+    }
+
+    public List<Cell> getSurroundingCells() {
+        List<Cell> surroundingCells = new ArrayList<>();
+
+        surroundingCells.add(cell.getNeighbor(0, -1)); // upper neighbor
+        surroundingCells.add(cell.getNeighbor(-1, -1)); // upper left neighbor
+        surroundingCells.add(cell.getNeighbor(1, -1)); // upper right neighbor
+        surroundingCells.add(cell.getNeighbor(0, 1)); // bottom neighbor
+        surroundingCells.add(cell.getNeighbor(-1, 1)); // bottom left neighbor
+        surroundingCells.add(cell.getNeighbor(1, 1)); // bottom right neighbor
+        surroundingCells.add(cell.getNeighbor(-1, 0)); // left neighbor
+        surroundingCells.add(cell.getNeighbor(1, 0)); // right neighbor
+        surroundingCells.add(cell.getNeighbor(0, 0)); // standing on it
+
+        return surroundingCells;
     }
 
     public int getHealth() {
