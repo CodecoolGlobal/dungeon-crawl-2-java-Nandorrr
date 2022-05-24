@@ -5,7 +5,7 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import java.util.List;
 import java.util.Random;
 
-public class Skeleton extends Actor implements Enemy{
+public class Skeleton extends Actor{
     public Skeleton(Cell cell) {
         super(cell);
         this.health = ActorStats.SKELETON.health;
@@ -23,16 +23,18 @@ public class Skeleton extends Actor implements Enemy{
         return "skeleton";
     }
 
-    @Override
-    public void hitPlayer() {
-        List<Cell>  surroundingCells = super.getSurroundingCells();
 
-        for(Cell cell : surroundingCells){
-            if (cell.getActor() != null){
-                int hitDamage = ActorStats.SKELETON.damage;
-                cell.getActor().getHurt(hitDamage);
+        @Override
+        public void hitActor() {
+            List<Cell>  surroundingCells = super.getSurroundingCells();
+
+            for(Cell cell : surroundingCells){
+                Actor otherActor = cell.getActor();
+                if (otherActor instanceof Player){
+                    int hitDamage = ActorStats.SKELETON.damage;
+                    otherActor.getHurt(hitDamage);
+                }
             }
         }
-    }
 
 }
