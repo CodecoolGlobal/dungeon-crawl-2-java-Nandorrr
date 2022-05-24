@@ -63,8 +63,13 @@ public class Player extends Actor {
                     hasKey = true;
                     inventory.add(item);
                 } else if (item instanceof HealthPotion) {
-                    increaseHealth(((HealthPotion) item).getHealingValue());
-                    inventory.add(item);
+                    if (this.health <= 80) {
+                        increaseHealth(((HealthPotion) item).getHealingValue());
+                    } else if (this.health >= 100) {
+                        inventory.add(item);
+                    } else {
+                        this.health = 100;
+                    }
                 } else if (item instanceof ChestPlate) {
                     increaseArmor(((ChestPlate) item).increaseArmor());
                     inventory.add(item);
@@ -81,11 +86,7 @@ public class Player extends Actor {
     }
 
     private void increaseHealth(int extraHealth) {
-        if (this.health <= 80) {
-            this.health += extraHealth;
-        } else {
-            this.health = 100;
-        }
+        this.health += extraHealth;
     }
 
     private void increaseDamage(int extraDamage) {
