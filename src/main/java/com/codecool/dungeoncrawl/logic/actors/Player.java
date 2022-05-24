@@ -104,6 +104,18 @@ public class Player extends Actor {
 
     }
 
+    @Override
+    public void hitActor() {
+        List<Cell>  surroundingCells = super.getSurroundingCells();
+
+        for(Cell cell : surroundingCells){
+            Actor enemy = cell.getActor();
+            if (enemy instanceof Enemy){
+                enemy.getHurt(this.damage);
+            }
+        }
+    }
+
     private void increaseHealth(int extraHealth) {
         this.health += extraHealth;
     }
