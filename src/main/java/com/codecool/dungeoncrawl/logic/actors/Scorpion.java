@@ -3,7 +3,7 @@ package com.codecool.dungeoncrawl.logic.actors;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.Drawable;
 
-public class Scorpion extends Actor {
+public class Scorpion extends Actor implements Enemy {
 
     public Scorpion(Cell cell) {
         super(cell);
@@ -19,6 +19,11 @@ public class Scorpion extends Actor {
 
     @Override
     public void move(int dx, int dy) {
+
+    }
+
+    @Override
+    public void hitActor() {
 
     }
 }
