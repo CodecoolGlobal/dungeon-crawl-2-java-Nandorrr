@@ -3,6 +3,7 @@ package com.codecool.dungeoncrawl;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
+import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -33,8 +34,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         GridPane ui = new GridPane();
-        ui.setPrefWidth(200);
-        ui.setPadding(new Insets(10));
+        ui.setPrefWidth(300);
+        ui.setPadding(new Insets(20));
 
         ui.add(new Label("Health: "), 0, 0);
         ui.add(healthLabel, 1, 0);
@@ -46,7 +47,7 @@ public class Main extends Application {
         ui.add(armorLabel, 1, 2);
 
         ui.add(new Label("Inventory: "), 0, 3);
-        ui.add(inventoryLabel, 1, 2);
+        ui.add(inventoryLabel, 0, 4);
 
         BorderPane borderPane = new BorderPane();
 
@@ -63,21 +64,26 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
+        Player player = map.getPlayer();
         switch (keyEvent.getCode()) {
             case UP:
-                map.getPlayer().move(0, -1);
+                player.move(0, -1);
                 refresh();
                 break;
             case DOWN:
-                map.getPlayer().move(0, 1);
+                player.move(0, 1);
                 refresh();
                 break;
             case LEFT:
-                map.getPlayer().move(-1, 0);
+                player.move(-1, 0);
                 refresh();
                 break;
             case RIGHT:
-                map.getPlayer().move(1,0);
+                player.move(1,0);
+                refresh();
+                break;
+            case SPACE:
+                player.pickUpItem();
                 refresh();
                 break;
         }
