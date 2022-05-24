@@ -36,7 +36,7 @@ public class MapLoader {
                             cell.setType(CellType.WALL);
                             break;
                         case 'd':
-                            cell.setType(CellType.DOOR);
+                            cell.setType(CellType.CLOSED_DOOR);
                             break;
                         case '.':
                             cell.setType(CellType.FLOOR);
