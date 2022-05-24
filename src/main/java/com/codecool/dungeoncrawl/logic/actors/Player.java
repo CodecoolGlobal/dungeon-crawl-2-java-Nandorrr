@@ -74,6 +74,7 @@ public class Player extends Actor {
                 } else {
                     inventory.add(item);
                 }
+                neighbor.setItem(null);
             }
         }
 
