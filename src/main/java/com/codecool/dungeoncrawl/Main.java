@@ -82,8 +82,12 @@ public class Main extends Application {
                 player.move(1,0);
                 refresh();
                 break;
-            case SPACE:
+            case F:
                 player.pickUpItem();
+                refresh();
+                break;
+            case SPACE:
+                player.hitActor();
                 refresh();
                 break;
         }

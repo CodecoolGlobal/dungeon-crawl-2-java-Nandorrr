@@ -23,7 +23,9 @@ public abstract class Actor implements Drawable {
 
     public abstract void move(int dx, int dy);
 
-    public List<Cell> getSurroundingCells() {
+    public abstract void hitActor();
+
+    protected List<Cell> getSurroundingCells() {
         List<Cell> surroundingCells = new ArrayList<>();
 
         surroundingCells.add(cell.getNeighbor(0, -1)); // upper neighbor
@@ -43,8 +45,21 @@ public abstract class Actor implements Drawable {
         return health;
     }
 
+    public boolean isAlive(){
+        return getHealth() >= 0;
+    }
+
     public int getDamage() {
         return damage;
+    }
+
+    protected void getHurt(int damage){
+        if (isAlive()) {
+            this.health -= damage;
+        }
+        else {
+            cell.setActor(null);
+        }
     }
 
     public int getArmor() {
