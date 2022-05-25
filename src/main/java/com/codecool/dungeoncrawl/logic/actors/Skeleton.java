@@ -4,6 +4,10 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.items.general.Key;
 import com.codecool.dungeoncrawl.logic.util.Directions;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.util.Duration;
 
 import java.util.List;
 import java.util.Random;
@@ -36,6 +40,17 @@ public class Skeleton extends Actor implements Enemy {
     }
 
 
+    private boolean isPlayerAround(){
+        List<Cell>  surroundingCells = super.getSurroundingCells();
+
+        for(Cell cell : surroundingCells){
+            Actor otherActor = cell.getActor();
+            if (otherActor instanceof Player){ return true;}
+        }
+        return false;
+    }
+
+
     @Override
     public void hitActor() {
         List<Cell>  surroundingCells = super.getSurroundingCells();
@@ -50,8 +65,12 @@ public class Skeleton extends Actor implements Enemy {
 
     public void executeBehaviour() {
         if (this.isAlive()){
-            Directions directionToMove = getRandomStepDirection();
-            move(directionToMove.dx, directionToMove.dy);
+            if (isPlayerAround()){
+                hitActor();
+            } else {
+                Directions directionToMove = getRandomStepDirection();
+                move(directionToMove.dx, directionToMove.dy);
+            }
         }
     }
 
