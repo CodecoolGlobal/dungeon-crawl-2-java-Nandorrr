@@ -3,9 +3,12 @@ package com.codecool.dungeoncrawl.logic.actors;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.Drawable;
+import com.codecool.dungeoncrawl.logic.util.Directions;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Random;
 
 public abstract class Actor implements Drawable {
 
@@ -84,6 +87,24 @@ public abstract class Actor implements Drawable {
 
     protected void addKey() {
         this.hasKey = true;
+    }
+
+    protected Directions getRandomStepDirection (){
+        Random rand = new Random();
+        int upperBound = 4;
+        int directionNum = rand.nextInt(upperBound);
+
+        switch (directionNum){
+            case 0:
+                return Directions.UP;
+            case 1:
+                return Directions.DOWN;
+            case 2:
+                return Directions.RIGHT;
+            default:
+                return Directions.LEFT;
+        }
+
     }
 
 }
