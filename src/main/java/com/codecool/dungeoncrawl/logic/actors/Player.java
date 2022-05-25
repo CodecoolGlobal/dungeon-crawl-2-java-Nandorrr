@@ -27,19 +27,21 @@ public class Player extends Actor {
 
     @Override
     public void move(int dx, int dy) {
-        Cell nextCell = cell.getNeighbor(dx, dy);
-        CellType nextCellType = nextCell.getType();
-        if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null)
-                || nextCellType == CellType.OPEN_DOOR
-                || (nextCellType == CellType.CLOSED_DOOR && hasKey)) {
-            if (nextCellType == CellType.CLOSED_DOOR) {
-                nextCell.setType(CellType.OPEN_DOOR);
-                removeFromInventory("key");
-                removeKey();
+        if (isAlive()) {
+            Cell nextCell = cell.getNeighbor(dx, dy);
+            CellType nextCellType = nextCell.getType();
+            if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null)
+                    || nextCellType == CellType.OPEN_DOOR
+                    || (nextCellType == CellType.CLOSED_DOOR && hasKey)) {
+                if (nextCellType == CellType.CLOSED_DOOR) {
+                    nextCell.setType(CellType.OPEN_DOOR);
+                    removeFromInventory("key");
+                    removeKey();
+                }
+                cell.setActor(null);
+                nextCell.setActor(this);
+                cell = nextCell;
             }
-            cell.setActor(null);
-            nextCell.setActor(this);
-            cell = nextCell;
         }
     }
 
@@ -77,45 +79,48 @@ public class Player extends Actor {
     }
 
     public void pickUpItem() {
-        List<Cell> surroundingCells = getSurroundingCells();
+        if (isAlive()) {
+            List<Cell> surroundingCells = getSurroundingCells();
 
-        for (Cell neighbor: surroundingCells) {
-            Item item = neighbor.getItem();
-            if (item != null) {
-                if (item instanceof Key) {
-                    hasKey = true;
-                    inventory.add(item);
-                } else if (item instanceof HealthPotion) {
-                    if (this.health <= 80) {
-                        increaseHealth(((HealthPotion) item).getHealingValue());
-                    } else if (this.health >= 100) {
+            for (Cell neighbor: surroundingCells) {
+                Item item = neighbor.getItem();
+                if (item != null) {
+                    if (item instanceof Key) {
+                        hasKey = true;
+                        inventory.add(item);
+                    } else if (item instanceof HealthPotion) {
+                        if (this.health <= 80) {
+                            increaseHealth(((HealthPotion) item).getHealingValue());
+                        } else if (this.health >= 100) {
+                            inventory.add(item);
+                        } else {
+                            this.health = 100;
+                        }
+                    } else if (item instanceof ChestPlate) {
+                        increaseArmor(((ChestPlate) item).increaseArmor());
+                        inventory.add(item);
+                    } else if (item instanceof Sword) {
+                        increaseDamage(((Sword) item).getDamage());
                         inventory.add(item);
                     } else {
-                        this.health = 100;
+                        inventory.add(item);
                     }
-                } else if (item instanceof ChestPlate) {
-                    increaseArmor(((ChestPlate) item).increaseArmor());
-                    inventory.add(item);
-                } else if (item instanceof Sword) {
-                    increaseDamage(((Sword) item).getDamage());
-                    inventory.add(item);
-                } else {
-                    inventory.add(item);
+                    neighbor.setItem(null);
                 }
-                neighbor.setItem(null);
             }
         }
-
     }
 
     @Override
     public void hitActor() {
-        List<Cell>  surroundingCells = super.getSurroundingCells();
+        if (isAlive()) {
+            List<Cell>  surroundingCells = super.getSurroundingCells();
 
-        for(Cell cell : surroundingCells){
-            Actor enemy = cell.getActor();
-            if (enemy instanceof Enemy){
-                enemy.getHurt(this.damage);
+            for(Cell cell : surroundingCells){
+                Actor enemy = cell.getActor();
+                if (enemy instanceof Enemy){
+                    enemy.getHurt(this.damage);
+                }
             }
         }
     }
