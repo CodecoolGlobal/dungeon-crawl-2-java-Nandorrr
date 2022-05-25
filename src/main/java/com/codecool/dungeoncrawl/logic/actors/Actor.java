@@ -101,10 +101,8 @@ public abstract class Actor implements Drawable {
                 return Directions.DOWN;
             case 2:
                 return Directions.RIGHT;
-            case 3:
-                return Directions.LEFT;
             default:
-                return Directions.RIGHT;
+                return Directions.LEFT;
         }
 
     }
