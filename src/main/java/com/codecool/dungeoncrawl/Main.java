@@ -5,10 +5,10 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.application.Application;
-import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.*;
@@ -33,57 +33,67 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        GridPane ui = createGridPane();
-
         BorderPane borderPane = new BorderPane();
+        GridPane ui = createInventoryBar();
+        VBox menu =  createSideMenuBar();
 
         borderPane.setCenter(canvas);
+        borderPane.setLeft(menu);
         borderPane.setRight(ui);
 
         Scene scene = new Scene(borderPane);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
         primaryStage.setScene(scene);
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+
     }
 
-    private GridPane createGridPane() {
+    private VBox createSideMenuBar() {
+        VBox menu = new VBox();
+        menu.getStyleClass().add("menubar");
+
+        Button newGame = new Button("NEW GAME");
+        Button saveGame = new Button("SAVE GAME");
+        Button controls = new Button("CONTROLS");
+        Button quit = new Button("QUIT");
+
+        newGame.setDisable(true);
+        saveGame.setDisable(true);
+        controls.setDisable(true);
+        quit.setDisable(true);
+
+        menu.getChildren().addAll(newGame, saveGame, controls, quit);
+
+        return menu;
+    }
+
+    private GridPane createInventoryBar() {
         GridPane ui = new GridPane();
+        ui.getStyleClass().add("player-stats");
+        ui.getColumnConstraints().add(new ColumnConstraints(200)); // column 0 is 100 wide
+        ui.getColumnConstraints().add(new ColumnConstraints(100)); // column 1 is 200 wide
+
         Label health = new Label("HEALTH: ");
         Label damage = new Label("DAMAGE: ");
         Label armor = new Label("ARMOR: ");
         Label inventory = new Label("INVENTORY: ");
 
-        ui.setPrefWidth(300);
-        ui.setPadding(new Insets(20));
-        ui.getColumnConstraints().add(new ColumnConstraints(200)); // column 0 is 100 wide
-        ui.getColumnConstraints().add(new ColumnConstraints(100)); // column 1 is 200 wide
-        ui.setBackground(new Background(new BackgroundFill(Color.BLACK, null, Insets.EMPTY)));
-        ui.setVgap(20);
-
         ui.add(health, 0, 0);
         ui.add(healthLabel, 1, 0);
-        health.setTextFill(Color.web("#fff"));
-        healthLabel.setTextFill(Color.web("#fff"));
 
         ui.add(damage, 0, 1);
         ui.add(damageLabel, 1, 1);
-        damage.setTextFill(Color.web("#fff"));
-        damageLabel.setTextFill(Color.web("#fff"));
 
         ui.add(armor, 0, 2);
         ui.add(armorLabel, 1, 2);
-        armor.setTextFill(Color.web("#fff"));
-        armorLabel.setTextFill(Color.web("#fff"));
-
-        ui.add(new Label(""), 0, 3);
 
         ui.add(inventory, 0, 4);
         ui.add(inventoryLabel, 0, 5);
-        inventory.setTextFill(Color.web("#fff"));
-        inventoryLabel.setTextFill(Color.web("#fff"));
 
         return ui;
     }
