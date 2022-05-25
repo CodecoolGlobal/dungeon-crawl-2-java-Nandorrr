@@ -61,7 +61,7 @@ public class Player extends Actor {
         for (String name: itemNamesNoDuplicate) {
             int itemCount = countItemInInventory(name);
             str.append("  - " + name);
-            str.append(": " + itemCount + " piece(s)");
+            str.append(": " + itemCount);
             str.append("\n");
         }
 
