@@ -71,6 +71,7 @@ public class Main extends Application {
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+        primaryStage.setFullScreen(true);
 
         play();
     }
