@@ -1,5 +1,7 @@
 package com.codecool.dungeoncrawl.logic;
 
+import com.codecool.dungeoncrawl.logic.actors.Actor;
+import com.codecool.dungeoncrawl.logic.actors.Enemy;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 
@@ -12,12 +14,12 @@ public class GameMap {
 
     private Player player;
 
-    private ArrayList<Skeleton> skeletonArmy;
+    private ArrayList<Actor> enemyArmy;
 
     public GameMap(int width, int height, CellType defaultCellType) {
         this.width = width;
         this.height = height;
-        this.skeletonArmy = new ArrayList<>();
+        this.enemyArmy = new ArrayList<>();
         cells = new Cell[width][height];
         for (int x = 0; x < width; x++) {
             for (int y = 0; y < height; y++) {
@@ -37,8 +39,14 @@ public class GameMap {
     public Player getPlayer() {
         return player;
     }
-    public void addToSkeletonArmy(Skeleton skeleton){skeletonArmy.add(skeleton);}
-    public ArrayList<Skeleton> getSkeletonArmy(){return skeletonArmy;}
+    public void addToEnemyArmy(Actor enemy){
+        enemyArmy.add(enemy);}
+    public ArrayList<Actor> getEnemyArmy(){return enemyArmy;}
+    public void removeEnemyFromArmy(Actor enemy){
+        if (!(enemy instanceof Player)){
+            enemyArmy.remove(enemy);
+        }
+    }
 
     public int getWidth() {
         return width;

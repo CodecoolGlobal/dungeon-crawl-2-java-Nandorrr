@@ -43,6 +43,10 @@ public class Player extends Actor {
         }
     }
 
+    @Override
+    public void executeBehaviour() {
+    }
+
     public List<Item> getInventory() {
         return this.inventory;
     }
