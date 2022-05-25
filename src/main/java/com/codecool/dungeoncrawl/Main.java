@@ -4,13 +4,13 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
-import com.codecool.dungeoncrawl.logic.actors.Enemy;
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -22,20 +22,33 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main extends Application {
-    GameMap map = MapLoader.loadMap();
-    Canvas canvas = new Canvas(
+
+    private List<String> mapFileNames = addMapNames();
+    private int currentMap = 0;
+    private String mapFileName = mapFileNames.get(currentMap);
+    private GameMap map = MapLoader.loadMap(mapFileName);
+    private Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
             map.getHeight() * Tiles.TILE_WIDTH);
-    GraphicsContext context = canvas.getGraphicsContext2D();
-    Label healthLabel = new Label();
-    Label damageLabel = new Label();
-    Label armorLabel = new Label();
-    Label inventoryLabel = new Label();
+    private GraphicsContext context = canvas.getGraphicsContext2D();
+    private Label healthLabel = new Label();
+    private Label damageLabel = new Label();
+    private Label armorLabel = new Label();
+    private Label inventoryLabel = new Label();
 
     public static void main(String[] args) {
         launch(args);
+    }
+
+    private List<String> addMapNames() {
+        List<String> fileNames = new ArrayList();
+        fileNames.add("/map.txt");
+//        fileNames.add("/map2.txt");
+//        fileNames.add("/map3.txt");
+        return fileNames;
     }
 
     @Override
@@ -58,24 +71,37 @@ public class Main extends Application {
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
-        moveEnemiesOnMap();
+
+        play();
     }
 
-    public void moveEnemiesOnMap(){
+    private void moveEnemiesOnMap(){
         ArrayList<Actor> enemyArmy = map.getEnemyArmy();
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e->{
-            for (Actor enemy : enemyArmy) {
-                if(!enemy.isAlive()){
-                    map.removeEnemyFromArmy(enemy);
-                }
-                enemy.executeBehaviour();
-                System.out.println(enemyArmy);
-            }
-            refresh();
-        }));
+        Timeline timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                for (Actor enemy : enemyArmy) {
+                    if(!enemy.isAlive()){
+                        map.removeEnemyFromArmy(enemy);
+                    }
+                    if (!map.getPlayer().isAlive()) {
+                        System.out.println("YOU DIED");
+                        timeline.stop();
+                        break;
+                    } else {
+                        enemy.executeBehaviour();
+                    }
+                }
+                refresh();
+            }
+        }));
         timeline.play();
+    }
 
+    private void play() {
+        moveEnemiesOnMap();
     }
 
     private VBox createSideMenuBar() {
