@@ -30,6 +30,7 @@ public class Main extends Application {
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
     private GameMap map = MapLoader.loadMap(mapFileName);
+    private Player player = map.getPlayer();
     private Canvas canvas = new Canvas(
             map.getWidth() * Tiles.TILE_WIDTH,
             map.getHeight() * Tiles.TILE_WIDTH);
@@ -87,7 +88,7 @@ public class Main extends Application {
                     if(!enemy.isAlive()){
                         map.removeEnemyFromArmy(enemy);
                     }
-                    if (!map.getPlayer().isAlive()) {
+                    if (!player.isAlive()) {
                         System.out.println("YOU DIED");
                         timeline.stop();
                         break;
@@ -103,6 +104,7 @@ public class Main extends Application {
 
     private void play() {
         moveEnemiesOnMap();
+//        setCameraOnPlayer(player.getCell());
     }
 
     private VBox createSideMenuBar() {
@@ -151,7 +153,6 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
-        Player player = map.getPlayer();
         switch (keyEvent.getCode()) {
             case W:
                 player.move(0, -1);
@@ -195,9 +196,9 @@ public class Main extends Application {
                 }
             }
         }
-        healthLabel.setText("" + map.getPlayer().getHealth());
-        damageLabel.setText("" + map.getPlayer().getDamage());
-        armorLabel.setText("" + map.getPlayer().getArmor());
-        inventoryLabel.setText("" + map.getPlayer().getInventoryContentText());
+        healthLabel.setText("" + player.getHealth());
+        damageLabel.setText("" + player.getDamage());
+        armorLabel.setText("" + player.getArmor());
+        inventoryLabel.setText("" + player.getInventoryContentText());
     }
 }
