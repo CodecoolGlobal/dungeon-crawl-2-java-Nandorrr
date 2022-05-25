@@ -11,8 +11,7 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -33,21 +32,8 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        GridPane ui = new GridPane();
-        ui.setPrefWidth(300);
-        ui.setPadding(new Insets(20));
 
-        ui.add(new Label("Health: "), 0, 0);
-        ui.add(healthLabel, 1, 0);
-
-        ui.add(new Label("Damage: "), 0, 1);
-        ui.add(damageLabel, 1, 1);
-
-        ui.add(new Label("Armor: "), 0, 2);
-        ui.add(armorLabel, 1, 2);
-
-        ui.add(new Label("Inventory: "), 0, 3);
-        ui.add(inventoryLabel, 0, 4);
+        GridPane ui = createGridPane();
 
         BorderPane borderPane = new BorderPane();
 
@@ -61,6 +47,45 @@ public class Main extends Application {
 
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+    }
+
+    private GridPane createGridPane() {
+        GridPane ui = new GridPane();
+        Label health = new Label("HEALTH: ");
+        Label damage = new Label("DAMAGE: ");
+        Label armor = new Label("ARMOR: ");
+        Label inventory = new Label("INVENTORY: ");
+
+        ui.setPrefWidth(300);
+        ui.setPadding(new Insets(20));
+        ui.getColumnConstraints().add(new ColumnConstraints(200)); // column 0 is 100 wide
+        ui.getColumnConstraints().add(new ColumnConstraints(100)); // column 1 is 200 wide
+        ui.setBackground(new Background(new BackgroundFill(Color.BLACK, null, Insets.EMPTY)));
+        ui.setVgap(20);
+
+        ui.add(health, 0, 0);
+        ui.add(healthLabel, 1, 0);
+        health.setTextFill(Color.web("#fff"));
+        healthLabel.setTextFill(Color.web("#fff"));
+
+        ui.add(damage, 0, 1);
+        ui.add(damageLabel, 1, 1);
+        damage.setTextFill(Color.web("#fff"));
+        damageLabel.setTextFill(Color.web("#fff"));
+
+        ui.add(armor, 0, 2);
+        ui.add(armorLabel, 1, 2);
+        armor.setTextFill(Color.web("#fff"));
+        armorLabel.setTextFill(Color.web("#fff"));
+
+        ui.add(new Label(""), 0, 3);
+
+        ui.add(inventory, 0, 4);
+        ui.add(inventoryLabel, 0, 5);
+        inventory.setTextFill(Color.web("#fff"));
+        inventoryLabel.setTextFill(Color.web("#fff"));
+
+        return ui;
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
