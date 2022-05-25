@@ -26,6 +26,8 @@ public abstract class Actor implements Drawable {
 
     public abstract void move(int dx, int dy);
 
+    public abstract void executeBehaviour();
+
     public abstract void hitActor();
 
     protected List<Cell> getSurroundingCells() {
@@ -62,6 +64,7 @@ public abstract class Actor implements Drawable {
         }
         else {
             cell.setActor(null);
+            cell.getGameMap().removeEnemyFromArmy(this);
         }
     }
 
