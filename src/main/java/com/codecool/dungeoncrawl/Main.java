@@ -4,6 +4,11 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.actors.Skeleton;
+import com.codecool.dungeoncrawl.logic.util.Directions;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
@@ -15,6 +20,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
+import java.util.Timer;
 
 public class Main extends Application {
     GameMap map = MapLoader.loadMap();
@@ -59,11 +68,25 @@ public class Main extends Application {
         refresh();
         scene.setOnKeyPressed(this::onKeyPressed);
 
+
         primaryStage.setTitle("Dungeon Crawl");
         primaryStage.show();
+        moveEnemiesOnMap();
     }
 
-    private void onKeyPressed(KeyEvent keyEvent) {
+    public void moveEnemiesOnMap(){
+        ArrayList<Skeleton> skeletonArmy = map.getSkeletonArmy();
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e->{
+            for (Skeleton skeleton : skeletonArmy) {
+                skeleton.executeBehaviour();
+            }
+            refresh();
+        }));
+        timeline.setCycleCount(Animation.INDEFINITE);
+        timeline.play();
+    }
+
+    private void onKeyPressed(KeyEvent keyEvent){
         Player player = map.getPlayer();
         switch (keyEvent.getCode()) {
             case UP:
