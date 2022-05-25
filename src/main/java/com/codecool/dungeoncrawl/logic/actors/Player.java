@@ -15,6 +15,8 @@ import java.util.Set;
 
 public class Player extends Actor {
 
+    private boolean movingToNextMap = false;
+
     private List<Item> inventory;
 
     public Player(Cell cell) {
@@ -31,16 +33,21 @@ public class Player extends Actor {
             Cell nextCell = cell.getNeighbor(dx, dy);
             CellType nextCellType = nextCell.getType();
             if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null)
+                    || nextCellType == CellType.STAIRS
                     || nextCellType == CellType.OPEN_DOOR
                     || (nextCellType == CellType.CLOSED_DOOR && hasKey)) {
-                if (nextCellType == CellType.CLOSED_DOOR) {
-                    nextCell.setType(CellType.OPEN_DOOR);
-                    removeFromInventory("key");
-                    removeKey();
+                if (nextCellType == CellType.STAIRS) {
+                    this.movingToNextMap = true;
+                } else {
+                    if (nextCellType == CellType.CLOSED_DOOR) {
+                        nextCell.setType(CellType.OPEN_DOOR);
+                        removeFromInventory("key");
+                        removeKey();
+                    }
+                    cell.setActor(null);
+                    nextCell.setActor(this);
+                    cell = nextCell;
                 }
-                cell.setActor(null);
-                nextCell.setActor(this);
-                cell = nextCell;
             }
         }
     }
@@ -147,5 +154,17 @@ public class Player extends Actor {
 
     public String getTileName() {
         return "player";
+    }
+
+    public void setCell(Cell cell) {
+        this.cell = cell;
+    }
+
+    public void setMovingToNextMap(Boolean isMovingToNextMap) {
+        this.movingToNextMap = isMovingToNextMap;
+    }
+
+    public boolean movingToNextMap() {
+        return this.movingToNextMap;
     }
 }
