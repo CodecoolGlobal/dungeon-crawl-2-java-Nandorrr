@@ -122,19 +122,19 @@ public class Main extends Application {
     private void onKeyPressed(KeyEvent keyEvent) {
         Player player = map.getPlayer();
         switch (keyEvent.getCode()) {
-            case UP:
+            case W:
                 player.move(0, -1);
                 refresh();
                 break;
-            case DOWN:
+            case S:
                 player.move(0, 1);
                 refresh();
                 break;
-            case LEFT:
+            case A:
                 player.move(-1, 0);
                 refresh();
                 break;
-            case RIGHT:
+            case D:
                 player.move(1,0);
                 refresh();
                 break;
