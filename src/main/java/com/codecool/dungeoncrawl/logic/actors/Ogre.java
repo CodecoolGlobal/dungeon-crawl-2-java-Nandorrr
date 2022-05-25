@@ -31,4 +31,9 @@ public class Ogre extends Actor implements Enemy {
     public void executeBehaviour() {
 
     }
+
+    @Override
+    public boolean isPlayerAround() {
+        return false;
+    }
 }

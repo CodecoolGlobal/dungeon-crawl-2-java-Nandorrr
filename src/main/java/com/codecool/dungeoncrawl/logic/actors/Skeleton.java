@@ -39,8 +39,8 @@ public class Skeleton extends Actor implements Enemy {
         return "skeleton";
     }
 
-
-    private boolean isPlayerAround(){
+    @Override
+    public boolean isPlayerAround(){
         List<Cell>  surroundingCells = super.getSurroundingCells();
 
         for(Cell cell : surroundingCells){

@@ -2,6 +2,11 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.Drawable;
+import com.codecool.dungeoncrawl.logic.GameMap;
+import com.codecool.dungeoncrawl.logic.util.Directions;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Scorpion extends Actor implements Enemy {
 
@@ -27,8 +32,26 @@ public class Scorpion extends Actor implements Enemy {
 
     }
 
-    @Override
     public void executeBehaviour() {
-
+        if (this.isAlive()){
+            if (isPlayerAround()){
+                hitActor();
+            } else {
+                Directions directionToMove = getRandomStepDirection();
+                move(directionToMove.dx, directionToMove.dy);
+            }
+        }
     }
+
+    @Override
+    public boolean isPlayerAround(){
+        List<Cell> surroundingCells = super.getSurroundingCells();
+
+        for(Cell cell : surroundingCells){
+            Actor otherActor = cell.getActor();
+            if (otherActor instanceof Player){ return true;}
+        }
+        return false;
+    }
+
 }

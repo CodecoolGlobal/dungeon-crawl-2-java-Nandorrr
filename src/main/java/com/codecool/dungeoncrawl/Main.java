@@ -69,7 +69,6 @@ public class Main extends Application {
                     map.removeEnemyFromArmy(enemy);
                 }
                 enemy.executeBehaviour();
-                System.out.println(enemyArmy);
             }
             refresh();
         }));

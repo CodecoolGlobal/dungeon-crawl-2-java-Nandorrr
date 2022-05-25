@@ -39,9 +39,12 @@ public class GameMap {
     public Player getPlayer() {
         return player;
     }
+
     public void addToEnemyArmy(Actor enemy){
         enemyArmy.add(enemy);}
+
     public ArrayList<Actor> getEnemyArmy(){return enemyArmy;}
+
     public void removeEnemyFromArmy(Actor enemy){
         if (!(enemy instanceof Player)){
             enemyArmy.remove(enemy);
