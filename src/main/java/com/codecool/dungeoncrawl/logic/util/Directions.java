@@ -6,11 +6,13 @@ public enum Directions {
     DOWN(0, 1),
     LEFT(-1, 0);
 
-    public int dx;
+    public final int dx;
 
-    public int dy;
+    public final int dy;
 
 
     Directions(int dx, int dy) {
+        this.dx = dx;
+        this.dy = dy;
     }
 }
