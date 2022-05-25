@@ -26,4 +26,9 @@ public class Ogre extends Actor implements Enemy {
     public void hitActor() {
 
     }
+
+    @Override
+    public void executeBehaviour() {
+
+    }
 }
