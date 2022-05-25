@@ -26,4 +26,9 @@ public class Scorpion extends Actor implements Enemy {
     public void hitActor() {
 
     }
+
+    @Override
+    public void executeBehaviour() {
+
+    }
 }
