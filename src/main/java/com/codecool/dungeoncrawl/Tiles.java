@@ -25,6 +25,7 @@ public class Tiles {
     static {
         tileMap.put("empty", new Tile(0, 0));
         tileMap.put("wall", new Tile(10, 17));
+        tileMap.put("forest", new Tile(2, 1));
         tileMap.put("stairs down", new Tile(4, 6));
         tileMap.put("floor", new Tile(2, 0));
         tileMap.put("player", new Tile(27, 0));
@@ -32,6 +33,9 @@ public class Tiles {
         tileMap.put("closed door", new Tile(3, 3));
         tileMap.put("open door", new Tile(4, 3));
         tileMap.put("key", new Tile(16, 23));
+        tileMap.put("chest", new Tile(8, 6));
+        tileMap.put("open chest", new Tile(9, 6));
+        tileMap.put("jewel", new Tile(17, 22));
         tileMap.put("chest plate", new Tile(4, 23));
         tileMap.put("sword", new Tile(0, 30));
         tileMap.put("health potion", new Tile(23, 22));

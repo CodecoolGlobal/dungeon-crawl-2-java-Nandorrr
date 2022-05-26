@@ -2,25 +2,18 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
-import com.codecool.dungeoncrawl.logic.Drawable;
 import com.codecool.dungeoncrawl.logic.util.Directions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Ogre extends Actor implements Enemy {
-
-    int moveCount = 0;
-
-    int goalCount = 0;
-    private int[][] patrolCoords;
+    private Directions previousMove;
 
     public Ogre(Cell cell) {
         super(cell);
         this.health = ActorStats.OGRE.health;
         this.damage = ActorStats.OGRE.damage;
         this.armor = ActorStats.OGRE.baseArmor;
-        this.patrolCoords = patrolCoords;
     }
 
     @Override
@@ -32,9 +25,7 @@ public class Ogre extends Actor implements Enemy {
     public void move(int dx, int dy) {
         Cell nextCell = cell.getNeighbor(dx, dy);
         CellType nextCellType = nextCell.getType();
-        if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null)
-                || nextCellType == CellType.OPEN_DOOR
-                || (nextCellType == CellType.CLOSED_DOOR && hasKey)) {
+        if (nextCellType == CellType.FLOOR && nextCell.getActor() == null){
         cell.setActor(null);
         nextCell.setActor(this);
         cell = nextCell;}
@@ -46,7 +37,7 @@ public class Ogre extends Actor implements Enemy {
 
     }
 
-    private boolean isPlayerAround(){
+    public boolean isPlayerAround(){
         List<Cell>  surroundingCells = super.getSurroundingCells();
 
         for(Cell cell : surroundingCells){
@@ -59,13 +50,35 @@ public class Ogre extends Actor implements Enemy {
 
     @Override
     public void executeBehaviour() {
+        Directions left = Directions.LEFT;
+        Directions right = Directions.RIGHT;
         if (this.isAlive()){
             if (isPlayerAround()){
                 hitActor();
             } else {
-                int xCoord = cell.getNeighbor(cell.getX(), cell.getY()).getX();
-                int yCoord = cell.getNeighbor(cell.getX(), cell.getY()).getY();
-                move(xCoord, yCoord);
+                if (previousMove == null) {
+                    if (cell.getNeighbor(left.dx, left.dy).getType() == CellType.FLOOR) {
+                        previousMove = left;
+                        move(left.dx, left.dy);
+                    } else if (cell.getNeighbor(right.dx, right.dy).getType() == CellType.FLOOR) {
+                        move(right.dx, right.dy);
+                        previousMove = right;
+                    }
+                } else {
+                    if (cell.getNeighbor(previousMove.dx, previousMove.dy).getType() == CellType.FLOOR){
+                        move(previousMove.dx, previousMove.dy);
+                    } else {
+                        if (previousMove == left){
+                            previousMove = right;
+                            move(right.dx, right.dy);
+                        } else if (previousMove == right) {
+                            previousMove = left;
+                            move(left.dx, left.dy);
+                        }
+                    }
+                    }
+
+                }
             }
         }
     }
@@ -74,4 +87,4 @@ public class Ogre extends Actor implements Enemy {
 
 
 
-}
+
