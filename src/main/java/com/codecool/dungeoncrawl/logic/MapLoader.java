@@ -84,7 +84,7 @@ public class MapLoader {
                             break;
                         case 'o':
                             cell.setType(CellType.FLOOR);
-                            new Ogre(cell);
+                            map.addToEnemyArmy(new Ogre(cell));
                             break;
                         default:
                             throw new RuntimeException("Unrecognized character: '" + line.charAt(x) + "'");

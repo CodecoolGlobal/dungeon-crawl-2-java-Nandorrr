@@ -1,12 +1,11 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.Cell;
+import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
-import com.codecool.dungeoncrawl.logic.actors.Actor;
-import com.codecool.dungeoncrawl.logic.actors.Enemy;
-import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
+import com.codecool.dungeoncrawl.logic.actors.*;
+import com.codecool.dungeoncrawl.logic.util.Directions;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -43,7 +42,7 @@ public class Main extends Application {
 
         BorderPane borderPane = new BorderPane();
         GridPane ui = createInventoryBar();
-        VBox menu =  createSideMenuBar();
+        VBox menu = createSideMenuBar();
 
         borderPane.setCenter(canvas);
         borderPane.setLeft(menu);
@@ -61,15 +60,21 @@ public class Main extends Application {
         moveEnemiesOnMap();
     }
 
-    public void moveEnemiesOnMap(){
+    public void moveEnemiesOnMap() {
         ArrayList<Actor> enemyArmy = map.getEnemyArmy();
-        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e->{
+        Timeline timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> {
             for (Actor enemy : enemyArmy) {
-                if(!enemy.isAlive()){
+                if (!enemy.isAlive()) {
                     map.removeEnemyFromArmy(enemy);
                 }
+                if (enemy instanceof Ogre){
+                    if (enemy.getCell().getNeighbor(enemy.getX(), enemy.getY()).getType() == CellType.FLOOR) {
+                        enemy.executeBehaviour();
+                    //} else if (enemy.getCell().getNeighbor(enemy.getX(), enemy.getY()).getType() == CellType.WALL) {
+
+                    }
+                }
                 enemy.executeBehaviour();
-                System.out.println(enemyArmy);
             }
             refresh();
         }));
@@ -77,6 +82,7 @@ public class Main extends Application {
         timeline.play();
 
     }
+
 
     private VBox createSideMenuBar() {
         VBox menu = new VBox();
@@ -120,11 +126,13 @@ public class Main extends Application {
         ui.add(inventory, 0, 4);
         ui.add(inventoryLabel, 0, 5);
 
+
         return ui;
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
         Player player = map.getPlayer();
+
         switch (keyEvent.getCode()) {
             case UP:
                 player.move(0, -1);
