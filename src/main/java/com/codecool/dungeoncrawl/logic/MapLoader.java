@@ -93,7 +93,7 @@ public class MapLoader {
                             break;
                         case 'i':
                             cell.setType(CellType.FLOOR);
-                            new Scorpion(cell);
+                            map.addToEnemyArmy(new Scorpion(cell));
                             break;
                         case 'o':
                             cell.setType(CellType.FLOOR);

@@ -3,6 +3,9 @@ package com.codecool.dungeoncrawl.logic;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.items.Item;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Cell implements Drawable {
     private CellType type;
     private Actor actor;
@@ -58,7 +61,23 @@ public class Cell implements Drawable {
         return y;
     }
 
-    public GameMap getGameMap(){
+    public GameMap getGameMap() {
         return this.gameMap;
+    }
+
+    public List<Cell> getFloorTiles() {
+        int mapHeight = gameMap.getHeight();
+        int mapWidth = gameMap.getWidth();
+        List<Cell> emptyFloorTiles = new ArrayList<>();
+
+        for (int y = 0; y < mapHeight; y++) {
+            for (int x = 0; x < mapWidth; x++) {
+                Cell currentCell = this.gameMap.getCell(y,x);
+                if (currentCell.getType() == CellType.FLOOR && currentCell.getActor() == null) {
+                    emptyFloorTiles.add(currentCell);
+                }
+            }
+        }
+        return emptyFloorTiles;
     }
 }
