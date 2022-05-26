@@ -5,6 +5,9 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.popup.AlertBox;
+import com.codecool.dungeoncrawl.logic.popup.ControlsWindow;
+import com.codecool.dungeoncrawl.logic.popup.ExitWindow;
 import com.codecool.dungeoncrawl.logic.popup.GameOverWindow;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -28,8 +31,6 @@ import java.util.Objects;
 public class Main extends Application {
 
     private final List<String> mapFileNames = addMapNames();
-    private boolean gameIsPaused = false;
-    private boolean gameHasEnded = false;
     private Timeline monsterTimeline;
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
@@ -111,15 +112,15 @@ public class Main extends Application {
                 if(!enemy.isAlive()){
                     map.removeEnemyFromArmy(enemy);
                 }
-                if (!player.isAlive() || gameHasEnded) {
+                if (!player.isAlive()) {
                     System.out.println("YOU DIED");
                     monsterTimeline.stop();
                     break;
                 } else {
                     enemy.executeBehaviour();
                 }
+                refresh();
             }
-            refresh();
         }));
         monsterTimeline.play();
     }
@@ -166,8 +167,8 @@ public class Main extends Application {
 
         newGame.setDisable(true);
         saveGame.setDisable(true);
-        controls.setDisable(true);
 
+        addButtonEventListener(controls);
         addButtonEventListener(quit);
 
         menu.getChildren().addAll(newGame, saveGame, controls, quit);
@@ -180,9 +181,35 @@ public class Main extends Application {
             button.setOnAction(e -> {
                 borderPane.requestFocus();
                 monsterTimeline.pause();
-                GameOverWindow.display();
+                AlertBox exitWindow = createAlertBox("quit");
+                exitWindow.display();
                 monsterTimeline.play();
             });
+        } else if (button.getText().equalsIgnoreCase("controls")) {
+            button.setOnAction(e -> {
+                borderPane.requestFocus();
+                monsterTimeline.pause();
+                AlertBox controlsWindow = createAlertBox("controls");
+                controlsWindow.display();
+                monsterTimeline.play();
+            });
+        }
+    }
+
+    private AlertBox createAlertBox(String alertBoxType) {
+        switch (alertBoxType) {
+            case "quit":
+                ExitWindow exitWindow = new ExitWindow("Quit Game", "Are you sure you want to quit?\n" +
+                        "All unsaved progress will be lost.", "exitWindow");
+                return exitWindow;
+            case "gameOver":
+                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Would you like to play again?", "gameOverWindow");
+                return gameOverWindow;
+            case "controls":
+                ControlsWindow controlsWindow = new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
+                return controlsWindow;
+            default:
+                return null;
         }
     }
 
@@ -266,16 +293,8 @@ public class Main extends Application {
 
     private void gameOver() {
         monsterTimeline.stop();
-        GameOverWindow.display();
-    }
-
-    private void exitGame() {
-        try {
-            stop();
-        } catch (Exception e) {
-            System.exit(1);
-        }
-        System.exit(0);
+        AlertBox gameOverWindow = createAlertBox("gameOver");
+        gameOverWindow.display();
     }
 
     private void refresh() {
