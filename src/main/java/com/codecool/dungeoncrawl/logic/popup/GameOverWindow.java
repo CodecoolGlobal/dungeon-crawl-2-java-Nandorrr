@@ -10,7 +10,7 @@ public class GameOverWindow extends AlertBox {
 
     @Override
     public void display() {
-        window.showAndWait();
+        window.show();
     }
 
     @Override

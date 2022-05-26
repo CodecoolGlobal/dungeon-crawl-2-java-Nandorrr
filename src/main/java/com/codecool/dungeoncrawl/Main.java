@@ -295,6 +295,7 @@ public class Main extends Application {
 
     private void gameOver() {
         monsterTimeline.stop();
+        borderPane.requestFocus();
         AlertBox gameOverWindow = createAlertBox("gameOver");
         gameOverWindow.display();
     }

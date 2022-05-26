@@ -57,10 +57,14 @@
     -fx-min-height: 350px;
 }
 
-.gameOverWindow .label, .exitWindow .label {
+.gameOverWindow .label, .exitWindow .label, .controlsWindow .label {
     -fx-text-alignment: center;
 }
 
 .controlsWindow, .titleContainer, .buttonContainer {
     -fx-alignment: center;
+}
+
+.controlsTitle {
+    -fx-font-size: 25px;
 }
