@@ -5,6 +5,8 @@ import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Scorpion;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import com.codecool.dungeoncrawl.logic.items.armors.ChestPlate;
+import com.codecool.dungeoncrawl.logic.items.general.Chest;
+import com.codecool.dungeoncrawl.logic.items.general.Jewel;
 import com.codecool.dungeoncrawl.logic.items.general.Coin;
 import com.codecool.dungeoncrawl.logic.items.general.Key;
 import com.codecool.dungeoncrawl.logic.items.potions.HealthPotion;
@@ -37,6 +39,9 @@ public class MapLoader {
                         case '#':
                             cell.setType(CellType.WALL);
                             break;
+                        case '%':
+                            cell.setType(CellType.FOREST);
+                            break;
                         case '*':
                             cell.setType(CellType.STAIRS);
                             break;
@@ -53,6 +58,14 @@ public class MapLoader {
                         case '@':
                             cell.setType(CellType.FLOOR);
                             map.setPlayer(new Player(cell));
+                            break;
+                        case 'j':
+                            cell.setType(CellType.FLOOR);
+                            new Jewel(cell);
+                            break;
+                        case 'b':
+                            cell.setType(CellType.FLOOR);
+                            new Chest(cell);
                             break;
                         case 'h':
                             cell.setType(CellType.FLOOR);

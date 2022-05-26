@@ -4,6 +4,7 @@ import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.items.Item;
 import com.codecool.dungeoncrawl.logic.items.armors.ChestPlate;
+import com.codecool.dungeoncrawl.logic.items.general.Chest;
 import com.codecool.dungeoncrawl.logic.items.general.Key;
 import com.codecool.dungeoncrawl.logic.items.potions.HealthPotion;
 import com.codecool.dungeoncrawl.logic.items.weapons.Sword;
@@ -56,10 +57,6 @@ public class Player extends Actor {
     public void executeBehaviour() {
     }
 
-    public List<Item> getInventory() {
-        return this.inventory;
-    }
-
     public String getInventoryContentText() {
         StringBuilder str = new StringBuilder();
         List<String> inventoryItemNames = new ArrayList<>();
@@ -108,6 +105,9 @@ public class Player extends Actor {
                         inventory.add(item);
                     } else if (item instanceof Sword) {
                         increaseDamage(((Sword) item).getDamage());
+                        inventory.add(item);
+                    } else if (item instanceof Chest) {
+                         item.getCell().setType(CellType.OPEN_CHEST);
                         inventory.add(item);
                     } else {
                         inventory.add(item);
