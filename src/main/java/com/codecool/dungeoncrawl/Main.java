@@ -119,8 +119,8 @@ public class Main extends Application {
                 } else {
                     enemy.executeBehaviour();
                 }
-                refresh();
             }
+            refresh();
         }));
         monsterTimeline.play();
     }
