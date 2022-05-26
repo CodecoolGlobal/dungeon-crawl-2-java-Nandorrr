@@ -164,16 +164,18 @@ public class Main extends Application {
 
         Button newGame = new Button("NEW GAME");
         Button saveGame = new Button("SAVE GAME");
+        Button loadGame = new Button("LOAD GAME");
         Button controls = new Button("CONTROLS");
         Button quit = new Button("QUIT");
 
         newGame.setDisable(true);
         saveGame.setDisable(true);
+        loadGame.setDisable(true);
 
         addButtonEventListener(controls);
         addButtonEventListener(quit);
 
-        menu.getChildren().addAll(newGame, saveGame, controls, quit);
+        menu.getChildren().addAll(newGame, saveGame, loadGame, controls, quit);
 
         return menu;
     }
