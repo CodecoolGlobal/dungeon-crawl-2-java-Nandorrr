@@ -64,7 +64,7 @@ public abstract class AlertBox {
         Label confirmLabel = new Label();
         confirmLabel.setText(this.message);
 
-        Button closeButton = new Button("CONFIRM");
+        Button closeButton = new Button("QUIT");
         Button cancelButton = new Button("CANCEL");
 
         closeButton.setOnAction(e -> {

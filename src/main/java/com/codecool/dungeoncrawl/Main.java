@@ -164,16 +164,18 @@ public class Main extends Application {
 
         Button newGame = new Button("NEW GAME");
         Button saveGame = new Button("SAVE GAME");
+        Button loadGame = new Button("LOAD GAME");
         Button controls = new Button("CONTROLS");
         Button quit = new Button("QUIT");
 
         newGame.setDisable(true);
         saveGame.setDisable(true);
+        loadGame.setDisable(true);
 
         addButtonEventListener(controls);
         addButtonEventListener(quit);
 
-        menu.getChildren().addAll(newGame, saveGame, controls, quit);
+        menu.getChildren().addAll(newGame, saveGame, loadGame, controls, quit);
 
         return menu;
     }
@@ -205,7 +207,7 @@ public class Main extends Application {
                         "All unsaved progress will be lost.", "exitWindow");
                 return exitWindow;
             case "gameOver":
-                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Would you like to play again?", "gameOverWindow");
+                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Your journey ends here...", "gameOverWindow");
                 return gameOverWindow;
             case "controls":
                 ControlsWindow controlsWindow = new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
@@ -295,6 +297,7 @@ public class Main extends Application {
 
     private void gameOver() {
         monsterTimeline.stop();
+        borderPane.requestFocus();
         AlertBox gameOverWindow = createAlertBox("gameOver");
         gameOverWindow.display();
     }

@@ -85,6 +85,7 @@ public class ControlsWindow extends AlertBox {
         titleContainer.getStyleClass().add("titleContainer");
         titleContainer.setMinSize(600, 100);
         Label keyBindings = new Label(this.message);
+        keyBindings.getStyleClass().add("controlsTitle");
         titleContainer.getChildren().add(keyBindings);
 
         // add buttons
