@@ -7,6 +7,10 @@ import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.*;
+import com.codecool.dungeoncrawl.logic.popup.AlertBox;
+import com.codecool.dungeoncrawl.logic.popup.ControlsWindow;
+import com.codecool.dungeoncrawl.logic.popup.ExitWindow;
+import com.codecool.dungeoncrawl.logic.popup.GameOverWindow;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -29,6 +33,7 @@ import java.util.Objects;
 public class Main extends Application {
 
     private final List<String> mapFileNames = addMapNames();
+    private Timeline monsterTimeline;
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
     private GameMap map = MapLoader.loadMap(mapFileName);
@@ -64,7 +69,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
         initGameWindow();
-        play();
+        moveEnemiesOnMap();
     }
 
     private void initGameWindow() {
@@ -100,32 +105,26 @@ public class Main extends Application {
         scrollPane.vbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
-    private void play() {
-        moveEnemiesOnMap();
-//        setCameraOnPlayer(player.getCell());
-    }
-
     private void moveEnemiesOnMap(){
         ArrayList<Actor> enemyArmy = map.getEnemyArmy();
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
+        monsterTimeline = new Timeline();
+        monsterTimeline.setCycleCount(Animation.INDEFINITE);
+        monsterTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
             for (Actor enemy : enemyArmy) {
                 if(!enemy.isAlive()){
                     map.removeEnemyFromArmy(enemy);
                 }
                 if (!player.isAlive()) {
                     System.out.println("YOU DIED");
-                    timeline.stop();
+                    monsterTimeline.stop();
                     break;
                 } else {
                     enemy.executeBehaviour();
                 }
-
             }
             refresh();
         }));
-        timeline.play();
+        monsterTimeline.play();
     }
 
     private void initNextMap() {
@@ -170,16 +169,50 @@ public class Main extends Application {
 
         newGame.setDisable(true);
         saveGame.setDisable(true);
-        controls.setDisable(true);
 
-        quit.setOnAction(e -> {
-            borderPane.requestFocus();
-            System.exit(0);
-        });
+        addButtonEventListener(controls);
+        addButtonEventListener(quit);
 
         menu.getChildren().addAll(newGame, saveGame, controls, quit);
 
         return menu;
+    }
+
+    private void addButtonEventListener(Button button) {
+        if (button.getText().equalsIgnoreCase("quit")) {
+            button.setOnAction(e -> {
+                borderPane.requestFocus();
+                monsterTimeline.pause();
+                AlertBox exitWindow = createAlertBox("quit");
+                exitWindow.display();
+                monsterTimeline.play();
+            });
+        } else if (button.getText().equalsIgnoreCase("controls")) {
+            button.setOnAction(e -> {
+                borderPane.requestFocus();
+                monsterTimeline.pause();
+                AlertBox controlsWindow = createAlertBox("controls");
+                controlsWindow.display();
+                monsterTimeline.play();
+            });
+        }
+    }
+
+    private AlertBox createAlertBox(String alertBoxType) {
+        switch (alertBoxType) {
+            case "quit":
+                ExitWindow exitWindow = new ExitWindow("Quit Game", "Are you sure you want to quit?\n" +
+                        "All unsaved progress will be lost.", "exitWindow");
+                return exitWindow;
+            case "gameOver":
+                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Would you like to play again?", "gameOverWindow");
+                return gameOverWindow;
+            case "controls":
+                ControlsWindow controlsWindow = new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
+                return controlsWindow;
+            default:
+                return null;
+        }
     }
 
     private GridPane createInventoryBar() {
@@ -252,7 +285,23 @@ public class Main extends Application {
         if (player.movingToNextMap()) initNextMap();
     }
 
+    private void checkGameEndConditions() {
+        //TODO: check win condition
+
+        if (!player.isAlive()) {
+            gameOver();
+        }
+    }
+
+    private void gameOver() {
+        monsterTimeline.stop();
+        AlertBox gameOverWindow = createAlertBox("gameOver");
+        gameOverWindow.display();
+    }
+
     private void refresh() {
+        checkGameEndConditions();
+
         context.setFill(Color.BLACK);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for (int x = 0; x < map.getWidth(); x++) {
