@@ -5,6 +5,7 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.popup.GameOverWindow;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -27,7 +28,9 @@ import java.util.Objects;
 public class Main extends Application {
 
     private final List<String> mapFileNames = addMapNames();
+    private boolean gameIsPaused = false;
     private boolean gameHasEnded = false;
+    private Timeline monsterTimeline;
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
     private GameMap map = MapLoader.loadMap(mapFileName);
@@ -63,7 +66,7 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
         initGameWindow();
-        play();
+        moveEnemiesOnMap();
     }
 
     private void initGameWindow() {
@@ -99,23 +102,18 @@ public class Main extends Application {
         scrollPane.vbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
-    private void play() {
-        moveEnemiesOnMap();
-//        setCameraOnPlayer(player.getCell());
-    }
-
     private void moveEnemiesOnMap(){
         ArrayList<Actor> enemyArmy = map.getEnemyArmy();
-        Timeline timeline = new Timeline();
-        timeline.setCycleCount(Animation.INDEFINITE);
-        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
+        monsterTimeline = new Timeline();
+        monsterTimeline.setCycleCount(Animation.INDEFINITE);
+        monsterTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
             for (Actor enemy : enemyArmy) {
                 if(!enemy.isAlive()){
                     map.removeEnemyFromArmy(enemy);
                 }
                 if (!player.isAlive() || gameHasEnded) {
                     System.out.println("YOU DIED");
-                    timeline.stop();
+                    monsterTimeline.stop();
                     break;
                 } else {
                     enemy.executeBehaviour();
@@ -123,7 +121,7 @@ public class Main extends Application {
             }
             refresh();
         }));
-        timeline.play();
+        monsterTimeline.play();
     }
 
     private void initNextMap() {
@@ -181,8 +179,9 @@ public class Main extends Application {
         if (button.getText().equalsIgnoreCase("quit")) {
             button.setOnAction(e -> {
                 borderPane.requestFocus();
-                this.gameHasEnded = true;
-                System.exit(0);
+                monsterTimeline.pause();
+                GameOverWindow.display();
+                monsterTimeline.play();
             });
         }
     }
@@ -257,7 +256,31 @@ public class Main extends Application {
         if (player.movingToNextMap()) initNextMap();
     }
 
+    private void checkGameEndConditions() {
+        //TODO: check win condition
+
+        if (!player.isAlive()) {
+            gameOver();
+        }
+    }
+
+    private void gameOver() {
+        monsterTimeline.stop();
+        GameOverWindow.display();
+    }
+
+    private void exitGame() {
+        try {
+            stop();
+        } catch (Exception e) {
+            System.exit(1);
+        }
+        System.exit(0);
+    }
+
     private void refresh() {
+        checkGameEndConditions();
+
         context.setFill(Color.BLACK);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for (int x = 0; x < map.getWidth(); x++) {
