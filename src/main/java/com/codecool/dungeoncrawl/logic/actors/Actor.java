@@ -51,7 +51,7 @@ public abstract class Actor implements Drawable {
     }
 
     public boolean isAlive(){
-        return getHealth() >= 0;
+        return getHealth() > 0;
     }
 
     public int getDamage() {

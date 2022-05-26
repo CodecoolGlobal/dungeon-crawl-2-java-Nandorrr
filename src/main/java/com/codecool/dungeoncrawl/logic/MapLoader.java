@@ -5,6 +5,8 @@ import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.actors.Scorpion;
 import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 import com.codecool.dungeoncrawl.logic.items.armors.ChestPlate;
+import com.codecool.dungeoncrawl.logic.items.general.Chest;
+import com.codecool.dungeoncrawl.logic.items.general.Jewel;
 import com.codecool.dungeoncrawl.logic.items.general.Coin;
 import com.codecool.dungeoncrawl.logic.items.general.Key;
 import com.codecool.dungeoncrawl.logic.items.potions.HealthPotion;
@@ -16,8 +18,8 @@ import java.util.Scanner;
 
 public class MapLoader {
 
-    public static GameMap loadMap() {
-        InputStream is = MapLoader.class.getResourceAsStream("/map.txt");
+    public static GameMap loadMap(String mapFileName) {
+        InputStream is = MapLoader.class.getResourceAsStream(mapFileName);
         Scanner scanner = new Scanner(is);
         int width = scanner.nextInt();
         int height = scanner.nextInt();
@@ -37,8 +39,11 @@ public class MapLoader {
                         case '#':
                             cell.setType(CellType.WALL);
                             break;
+                        case '%':
+                            cell.setType(CellType.FOREST);
+                            break;
                         case '*':
-                            cell.setType(CellType.STAIRS_DOWN);
+                            cell.setType(CellType.STAIRS);
                             break;
                         case 'd':
                             cell.setType(CellType.CLOSED_DOOR);
@@ -53,6 +58,14 @@ public class MapLoader {
                         case '@':
                             cell.setType(CellType.FLOOR);
                             map.setPlayer(new Player(cell));
+                            break;
+                        case 'j':
+                            cell.setType(CellType.FLOOR);
+                            new Jewel(cell);
+                            break;
+                        case 'b':
+                            cell.setType(CellType.FLOOR);
+                            new Chest(cell);
                             break;
                         case 'h':
                             cell.setType(CellType.FLOOR);

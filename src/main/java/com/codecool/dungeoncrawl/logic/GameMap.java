@@ -1,9 +1,7 @@
 package com.codecool.dungeoncrawl.logic;
 
 import com.codecool.dungeoncrawl.logic.actors.Actor;
-import com.codecool.dungeoncrawl.logic.actors.Enemy;
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
 
 import java.util.ArrayList;
 
@@ -39,9 +37,12 @@ public class GameMap {
     public Player getPlayer() {
         return player;
     }
+
     public void addToEnemyArmy(Actor enemy){
         enemyArmy.add(enemy);}
+
     public ArrayList<Actor> getEnemyArmy(){return enemyArmy;}
+
     public void removeEnemyFromArmy(Actor enemy){
         if (!(enemy instanceof Player)){
             enemyArmy.remove(enemy);
