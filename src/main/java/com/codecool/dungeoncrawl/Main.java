@@ -205,7 +205,7 @@ public class Main extends Application {
                         "All unsaved progress will be lost.", "exitWindow");
                 return exitWindow;
             case "gameOver":
-                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Would you like to play again?", "gameOverWindow");
+                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Your journey ends here...", "gameOverWindow");
                 return gameOverWindow;
             case "controls":
                 ControlsWindow controlsWindow = new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
