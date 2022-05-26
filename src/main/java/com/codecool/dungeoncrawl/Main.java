@@ -9,12 +9,15 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -35,6 +38,7 @@ public class Main extends Application {
             map.getHeight() * Tiles.TILE_WIDTH);
     private Stage stage;
     private BorderPane borderPane;
+    private VBox menu;
     private Scene scene;
     private GraphicsContext context = canvas.getGraphicsContext2D();
     private final Label healthLabel = new Label();
@@ -63,12 +67,12 @@ public class Main extends Application {
 
     private void createMap() {
         borderPane = new BorderPane();
-        GridPane ui = createInventoryBar();
-        VBox menu =  createSideMenuBar();
+        GridPane inventoryBar = createInventoryBar();
+        menu =  createSideMenuBar();
 
         borderPane.setCenter(canvas);
         borderPane.setLeft(menu);
-        borderPane.setRight(ui);
+        borderPane.setRight(inventoryBar);
 
         scene = new Scene(borderPane);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
@@ -97,7 +101,7 @@ public class Main extends Application {
                     map.removeEnemyFromArmy(enemy);
                 }
                 if (!player.isAlive()) {
-                    System.out.println("DIED");
+                    System.out.println("YOU DIED");
                     timeline.stop();
                     break;
                 } else {
@@ -144,7 +148,9 @@ public class Main extends Application {
         newGame.setDisable(true);
         saveGame.setDisable(true);
         controls.setDisable(true);
-        quit.setDisable(true);
+//        quit.setDisable(true);
+
+        quit.setOnAction(event -> System.exit(0));
 
         menu.getChildren().addAll(newGame, saveGame, controls, quit);
 
