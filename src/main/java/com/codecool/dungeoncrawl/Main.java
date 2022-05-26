@@ -9,15 +9,13 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -28,18 +26,20 @@ import java.util.Objects;
 
 public class Main extends Application {
 
-    private List<String> mapFileNames = addMapNames();
+    private final List<String> mapFileNames = addMapNames();
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
     private GameMap map = MapLoader.loadMap(mapFileName);
     private final Player player = map.getPlayer();
-    private Canvas canvas = new Canvas(
-            map.getWidth() * Tiles.TILE_WIDTH,
-            map.getHeight() * Tiles.TILE_WIDTH);
     private Stage stage;
+    private ScrollPane scrollPane = new ScrollPane();
     private BorderPane borderPane;
     private VBox menu;
     private Scene scene;
+    private int WORLD_SIZE_X = map.getWidth() * Tiles.TILE_WIDTH;
+    private int WORLD_SIZE_Y = map.getHeight() * Tiles.TILE_WIDTH;
+
+    private Canvas canvas = new Canvas(WORLD_SIZE_X, WORLD_SIZE_Y);
     private GraphicsContext context = canvas.getGraphicsContext2D();
     private final Label healthLabel = new Label();
     private final Label damageLabel = new Label();
@@ -61,16 +61,18 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
         this.stage = primaryStage;
-        createMap();
+        initGameWindow();
         play();
     }
 
-    private void createMap() {
+    private void initGameWindow() {
         borderPane = new BorderPane();
         GridPane inventoryBar = createInventoryBar();
         menu =  createSideMenuBar();
 
-        borderPane.setCenter(canvas);
+        initScrollPane();
+
+        borderPane.setCenter(scrollPane);
         borderPane.setLeft(menu);
         borderPane.setRight(inventoryBar);
 
@@ -84,6 +86,16 @@ public class Main extends Application {
         this.stage.setTitle("Dungeon Crawl");
         this.stage.show();
         this.stage.setFullScreen(true);
+
+        borderPane.requestFocus();
+    }
+
+    private void initScrollPane() {
+        scrollPane.pannableProperty().set(true);
+        scrollPane.setContent(canvas);
+
+        scrollPane.hbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
+        scrollPane.vbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
     private void play() {
@@ -117,21 +129,29 @@ public class Main extends Application {
         currentMap++;
         mapFileName = mapFileNames.get(currentMap);
         map = MapLoader.loadMap(mapFileName);
+
         Cell cell = map.getPlayer().getCell();
         player.setCell(cell);
         map.setPlayer(player);
 
-        canvas = new Canvas(
-                map.getWidth() * Tiles.TILE_WIDTH,
-                map.getHeight() * Tiles.TILE_WIDTH);
+        WORLD_SIZE_X = map.getWidth() * Tiles.TILE_WIDTH;
+        WORLD_SIZE_Y = map.getHeight() * Tiles.TILE_WIDTH;
+
+        canvas = new Canvas(WORLD_SIZE_X, WORLD_SIZE_Y);
 
         context = canvas.getGraphicsContext2D();
 
-        borderPane.setCenter(canvas);
+        scrollPane = new ScrollPane();
+
+        initScrollPane();
+
+        borderPane.setCenter(scrollPane);
 
         player.setMovingToNextMap(false);
 
         moveEnemiesOnMap();
+
+        borderPane.requestFocus();
 
         refresh();
     }
@@ -148,9 +168,11 @@ public class Main extends Application {
         newGame.setDisable(true);
         saveGame.setDisable(true);
         controls.setDisable(true);
-//        quit.setDisable(true);
 
-        quit.setOnAction(event -> System.exit(0));
+        quit.setOnAction(e -> {
+            borderPane.requestFocus();
+            System.exit(0);
+        });
 
         menu.getChildren().addAll(newGame, saveGame, controls, quit);
 
@@ -184,22 +206,36 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
+        Cell lastPlayerLocation =  player.getCell();
+
         switch (keyEvent.getCode()) {
             case W:
                 player.move(0, -1);
                 refresh();
+                if (lastPlayerLocation != player.getCell()) {
+                    scrollPane.setVvalue(scrollPane.getVvalue() - 1.6 / map.getHeight());
+                }
                 break;
             case S:
                 player.move(0, 1);
                 refresh();
+                if (lastPlayerLocation != player.getCell()) {
+                    scrollPane.setVvalue(scrollPane.getVvalue() + 1.6 / map.getHeight());
+                }
                 break;
             case A:
                 player.move(-1, 0);
                 refresh();
+                if (lastPlayerLocation != player.getCell()) {
+                    scrollPane.setHvalue(scrollPane.getHvalue() - 1.6 / map.getWidth());
+                }
                 break;
             case D:
                 player.move(1,0);
                 refresh();
+                if (lastPlayerLocation != player.getCell()) {
+                    scrollPane.setHvalue(scrollPane.getHvalue() + 1.6 / map.getWidth());
+                }
                 break;
             case F:
                 player.pickUpItem();
