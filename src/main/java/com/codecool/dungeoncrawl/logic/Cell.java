@@ -70,8 +70,8 @@ public class Cell implements Drawable {
         int mapWidth = gameMap.getWidth();
         List<Cell> emptyFloorTiles = new ArrayList<>();
 
-        for (int y = 0; y < mapHeight; y++) {
-            for (int x = 0; x < mapWidth; x++) {
+        for (int y = 0; y < mapWidth-1; y++) {
+            for (int x = 0; x < mapHeight-1; x++) {
                 Cell currentCell = this.gameMap.getCell(y,x);
                 if (currentCell.getType() == CellType.FLOOR && currentCell.getActor() == null) {
                     emptyFloorTiles.add(currentCell);

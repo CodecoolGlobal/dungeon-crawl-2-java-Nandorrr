@@ -1,9 +1,6 @@
 package com.codecool.dungeoncrawl.logic;
 
-import com.codecool.dungeoncrawl.logic.actors.Ogre;
-import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.Scorpion;
-import com.codecool.dungeoncrawl.logic.actors.Skeleton;
+import com.codecool.dungeoncrawl.logic.actors.*;
 import com.codecool.dungeoncrawl.logic.items.armors.ChestPlate;
 import com.codecool.dungeoncrawl.logic.items.general.Chest;
 import com.codecool.dungeoncrawl.logic.items.general.Jewel;
@@ -98,6 +95,10 @@ public class MapLoader {
                         case 'o':
                             cell.setType(CellType.FLOOR);
                             new Ogre(cell);
+                            break;
+                        case 'g':
+                            cell.setType(CellType.FLOOR);
+                            map.addToEnemyArmy(new Ghost(cell));
                             break;
                         default:
                             throw new RuntimeException("Unrecognized character: '" + line.charAt(x) + "'");
