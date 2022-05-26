@@ -27,6 +27,7 @@ import java.util.Objects;
 public class Main extends Application {
 
     private final List<String> mapFileNames = addMapNames();
+    private boolean gameHasEnded = false;
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
     private GameMap map = MapLoader.loadMap(mapFileName);
@@ -112,7 +113,7 @@ public class Main extends Application {
                 if(!enemy.isAlive()){
                     map.removeEnemyFromArmy(enemy);
                 }
-                if (!player.isAlive()) {
+                if (!player.isAlive() || gameHasEnded) {
                     System.out.println("YOU DIED");
                     timeline.stop();
                     break;
@@ -169,14 +170,21 @@ public class Main extends Application {
         saveGame.setDisable(true);
         controls.setDisable(true);
 
-        quit.setOnAction(e -> {
-            borderPane.requestFocus();
-            System.exit(0);
-        });
+        addButtonEventListener(quit);
 
         menu.getChildren().addAll(newGame, saveGame, controls, quit);
 
         return menu;
+    }
+
+    private void addButtonEventListener(Button button) {
+        if (button.getText().equalsIgnoreCase("quit")) {
+            button.setOnAction(e -> {
+                borderPane.requestFocus();
+                this.gameHasEnded = true;
+                System.exit(0);
+            });
+        }
     }
 
     private GridPane createInventoryBar() {
