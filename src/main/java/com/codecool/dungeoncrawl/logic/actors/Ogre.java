@@ -34,7 +34,14 @@ public class Ogre extends Actor implements Enemy {
 
     @Override
     public void hitActor() {
+        List<Cell>  surroundingCells = super.getSurroundingCells();
 
+        for(Cell cell : surroundingCells){
+            Actor otherActor = cell.getActor();
+            if (otherActor instanceof Player){
+                otherActor.getHurt(this.damage);
+            }
+        }
     }
 
     public boolean isPlayerAround(){

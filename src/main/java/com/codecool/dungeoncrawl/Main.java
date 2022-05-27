@@ -1,12 +1,10 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.actors.*;
 import com.codecool.dungeoncrawl.logic.popup.AlertBox;
 import com.codecool.dungeoncrawl.logic.popup.ControlsWindow;
 import com.codecool.dungeoncrawl.logic.popup.ExitWindow;
@@ -33,7 +31,7 @@ import java.util.Objects;
 public class Main extends Application {
 
     private final List<String> mapFileNames = addMapNames();
-    private Timeline monsterTimeline;
+    private Timeline monsterTimeline = new Timeline();
     private int currentMap = 0;
     private String mapFileName = mapFileNames.get(currentMap);
     private GameMap map = MapLoader.loadMap(mapFileName);
@@ -107,18 +105,18 @@ public class Main extends Application {
 
     private void moveEnemiesOnMap(){
         ArrayList<Actor> enemyArmy = map.getEnemyArmy();
-        monsterTimeline = new Timeline();
         monsterTimeline.setCycleCount(Animation.INDEFINITE);
         monsterTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
             for (Actor enemy : enemyArmy) {
-                if(!enemy.isAlive()){
-                    map.removeEnemyFromArmy(enemy);
-                }
                 if (!player.isAlive()) {
                     System.out.println("YOU DIED");
                     monsterTimeline.stop();
+                    monsterTimeline.setCycleCount(0);
                     break;
                 } else {
+                    if(!enemy.isAlive()){
+                        map.removeEnemyFromArmy(enemy);
+                    }
                     enemy.executeBehaviour();
                 }
             }
@@ -245,44 +243,45 @@ public class Main extends Application {
 
     private void onKeyPressed(KeyEvent keyEvent) {
         Cell lastPlayerLocation =  player.getCell();
-
-        switch (keyEvent.getCode()) {
-            case W:
-                player.move(0, -1);
-                refresh();
-                if (lastPlayerLocation != player.getCell()) {
-                    scrollPane.setVvalue(scrollPane.getVvalue() - 1.6 / map.getHeight());
-                }
-                break;
-            case S:
-                player.move(0, 1);
-                refresh();
-                if (lastPlayerLocation != player.getCell()) {
-                    scrollPane.setVvalue(scrollPane.getVvalue() + 1.6 / map.getHeight());
-                }
-                break;
-            case A:
-                player.move(-1, 0);
-                refresh();
-                if (lastPlayerLocation != player.getCell()) {
-                    scrollPane.setHvalue(scrollPane.getHvalue() - 1.6 / map.getWidth());
-                }
-                break;
-            case D:
-                player.move(1,0);
-                refresh();
-                if (lastPlayerLocation != player.getCell()) {
-                    scrollPane.setHvalue(scrollPane.getHvalue() + 1.6 / map.getWidth());
-                }
-                break;
-            case F:
-                player.pickUpItem();
-                refresh();
-                break;
-            case SPACE:
-                player.hitActor();
-                refresh();
-                break;
+        if (player.isAlive()) {
+            switch (keyEvent.getCode()) {
+                case W:
+                    player.move(0, -1);
+                    refresh();
+                    if (lastPlayerLocation != player.getCell()) {
+                        scrollPane.setVvalue(scrollPane.getVvalue() - 1.6 / map.getHeight());
+                    }
+                    break;
+                case S:
+                    player.move(0, 1);
+                    refresh();
+                    if (lastPlayerLocation != player.getCell()) {
+                        scrollPane.setVvalue(scrollPane.getVvalue() + 1.6 / map.getHeight());
+                    }
+                    break;
+                case A:
+                    player.move(-1, 0);
+                    refresh();
+                    if (lastPlayerLocation != player.getCell()) {
+                        scrollPane.setHvalue(scrollPane.getHvalue() - 1.6 / map.getWidth());
+                    }
+                    break;
+                case D:
+                    player.move(1,0);
+                    refresh();
+                    if (lastPlayerLocation != player.getCell()) {
+                        scrollPane.setHvalue(scrollPane.getHvalue() + 1.6 / map.getWidth());
+                    }
+                    break;
+                case F:
+                    player.pickUpItem();
+                    refresh();
+                    break;
+                case SPACE:
+                    player.hitActor();
+                    refresh();
+                    break;
+            }
         }
         if (player.movingToNextMap()) initNextMap();
     }
@@ -296,8 +295,8 @@ public class Main extends Application {
     }
 
     private void gameOver() {
-        monsterTimeline.stop();
-        borderPane.requestFocus();
+//        monsterTimeline.stop();
+//        borderPane.requestFocus();
         AlertBox gameOverWindow = createAlertBox("gameOver");
         gameOverWindow.display();
     }
