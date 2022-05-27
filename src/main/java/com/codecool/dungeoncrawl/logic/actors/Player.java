@@ -34,6 +34,7 @@ public class Player extends Actor {
             Cell nextCell = cell.getNeighbor(dx, dy);
             CellType nextCellType = nextCell.getType();
             if ((nextCellType == CellType.FLOOR && nextCell.getActor() == null)
+                    || (nextCellType == CellType.GRASS && nextCell.getActor() == null)
                     || nextCellType == CellType.STAIRS
                     || nextCellType == CellType.OPEN_DOOR
                     || (nextCellType == CellType.CLOSED_DOOR && hasKey)) {

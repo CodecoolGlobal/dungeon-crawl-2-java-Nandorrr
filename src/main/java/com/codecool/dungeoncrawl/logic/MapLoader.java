@@ -39,6 +39,9 @@ public class MapLoader {
                         case '%':
                             cell.setType(CellType.FOREST);
                             break;
+                        case 'u':
+                            cell.setType(CellType.GRASS);
+                            break;
                         case '*':
                             cell.setType(CellType.STAIRS);
                             break;
