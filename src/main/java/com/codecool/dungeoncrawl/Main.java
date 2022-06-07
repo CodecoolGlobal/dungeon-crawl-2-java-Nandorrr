@@ -30,17 +30,18 @@ import java.util.Objects;
 
 public class Main extends Application {
 
+    private static final String QUIT_LABEL = "quit";
+    private static final String CONTROLS_LABEL = "controls";
+    private static final String GAMEOVER_LABEL = "gameOver";
     private final List<String> mapFileNames = addMapNames();
-    private Timeline monsterTimeline = new Timeline();
-    private int currentMap = 0;
-    private String mapFileName = mapFileNames.get(currentMap);
+    private final Timeline monsterTimeline = new Timeline();
+    private int currentMapIndex = 0;
+    private String mapFileName = mapFileNames.get(currentMapIndex);
     private GameMap map = MapLoader.loadMap(mapFileName);
     private final Player player = map.getPlayer();
     private Stage stage;
     private ScrollPane scrollPane = new ScrollPane();
     private BorderPane borderPane;
-    private VBox menu;
-    private Scene scene;
     private int WORLD_SIZE_X = map.getWidth() * Tiles.TILE_WIDTH;
     private int WORLD_SIZE_Y = map.getHeight() * Tiles.TILE_WIDTH;
 
@@ -56,7 +57,7 @@ public class Main extends Application {
     }
 
     private List<String> addMapNames() {
-        ArrayList<String> fileNames = new ArrayList<>();
+        List<String> fileNames = new ArrayList<>();
         fileNames.add("/map.txt");
         fileNames.add("/map2.txt");
         fileNames.add("/map3.txt");
@@ -73,7 +74,7 @@ public class Main extends Application {
     private void initGameWindow() {
         borderPane = new BorderPane();
         GridPane inventoryBar = createInventoryBar();
-        menu =  createSideMenuBar();
+        VBox menu = createSideMenuBar();
 
         initScrollPane();
 
@@ -81,7 +82,7 @@ public class Main extends Application {
         borderPane.setLeft(menu);
         borderPane.setRight(inventoryBar);
 
-        scene = new Scene(borderPane);
+        Scene scene = new Scene(borderPane);
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("/style.css")).toExternalForm());
 
         this.stage.setScene(scene);
@@ -103,11 +104,11 @@ public class Main extends Application {
         scrollPane.vbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
-    private void moveEnemiesOnMap(){
-        ArrayList<Actor> enemyArmy = map.getEnemyArmy();
+    private void moveEnemiesOnMap() {
+        final List<Actor> enemyArmy = map.getEnemyArmy();
         monsterTimeline.setCycleCount(Animation.INDEFINITE);
         monsterTimeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), e -> {
-            for (Actor enemy : enemyArmy) {
+            for (final Actor enemy : enemyArmy) {
                 if (!player.isAlive()) {
                     System.out.println("YOU DIED");
                     monsterTimeline.stop();
@@ -126,11 +127,11 @@ public class Main extends Application {
     }
 
     private void initNextMap() {
-        currentMap++;
-        mapFileName = mapFileNames.get(currentMap);
+        currentMapIndex++;
+        mapFileName = mapFileNames.get(currentMapIndex);
         map = MapLoader.loadMap(mapFileName);
 
-        Cell cell = map.getPlayer().getCell();
+        final Cell cell = map.getPlayer().getCell();
         player.setCell(cell);
         map.setPlayer(player);
 
@@ -157,14 +158,14 @@ public class Main extends Application {
     }
 
     private VBox createSideMenuBar() {
-        VBox menu = new VBox();
+        final VBox menu = new VBox();
         menu.getStyleClass().add("menubar");
 
-        Button newGame = new Button("NEW GAME");
-        Button saveGame = new Button("SAVE GAME");
-        Button loadGame = new Button("LOAD GAME");
-        Button controls = new Button("CONTROLS");
-        Button quit = new Button("QUIT");
+        final Button newGame = new Button("NEW GAME");
+        final Button saveGame = new Button("SAVE GAME");
+        final Button loadGame = new Button("LOAD GAME");
+        final Button controls = new Button("CONTROLS");
+        final Button quit = new Button("QUIT");
 
         newGame.setDisable(true);
         saveGame.setDisable(true);
@@ -179,52 +180,49 @@ public class Main extends Application {
     }
 
     private void addButtonEventListener(Button button) {
-        if (button.getText().equalsIgnoreCase("quit")) {
+        if (button.getText().equalsIgnoreCase(QUIT_LABEL)) {
             button.setOnAction(e -> {
-                borderPane.requestFocus();
-                monsterTimeline.pause();
-                AlertBox exitWindow = createAlertBox("quit");
-                exitWindow.display();
-                monsterTimeline.play();
+                makeAlertBox(QUIT_LABEL);
             });
-        } else if (button.getText().equalsIgnoreCase("controls")) {
+        } else if (button.getText().equalsIgnoreCase(CONTROLS_LABEL)) {
             button.setOnAction(e -> {
-                borderPane.requestFocus();
-                monsterTimeline.pause();
-                AlertBox controlsWindow = createAlertBox("controls");
-                controlsWindow.display();
-                monsterTimeline.play();
+                makeAlertBox(CONTROLS_LABEL);
             });
         }
+    }
+
+    private void makeAlertBox(String boxType) {
+        borderPane.requestFocus();
+        monsterTimeline.pause();
+        AlertBox alertBox = createAlertBox(boxType);
+        alertBox.display();
+        monsterTimeline.play();
     }
 
     private AlertBox createAlertBox(String alertBoxType) {
         switch (alertBoxType) {
-            case "quit":
-                ExitWindow exitWindow = new ExitWindow("Quit Game", "Are you sure you want to quit?\n" +
+            case QUIT_LABEL:
+                return new ExitWindow("Quit Game", "Are you sure you want to quit?\n" +
                         "All unsaved progress will be lost.", "exitWindow");
-                return exitWindow;
-            case "gameOver":
-                GameOverWindow gameOverWindow = new GameOverWindow("Game Over", "Your journey ends here...", "gameOverWindow");
-                return gameOverWindow;
-            case "controls":
-                ControlsWindow controlsWindow = new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
-                return controlsWindow;
+            case GAMEOVER_LABEL:
+                return new GameOverWindow("Game Over", "Your journey ends here...", "gameOverWindow");
+            case CONTROLS_LABEL:
+                return new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
             default:
-                return null;
+                throw new IllegalArgumentException("Invalid alert box type: " + alertBoxType);
         }
     }
 
     private GridPane createInventoryBar() {
-        GridPane ui = new GridPane();
+        final GridPane ui = new GridPane();
         ui.getStyleClass().add("player-stats");
         ui.getColumnConstraints().add(new ColumnConstraints(200)); // column 0 is 100 wide
         ui.getColumnConstraints().add(new ColumnConstraints(100)); // column 1 is 200 wide
 
-        Label health = new Label("HEALTH: ");
-        Label damage = new Label("DAMAGE: ");
-        Label armor = new Label("ARMOR: ");
-        Label inventory = new Label("INVENTORY: ");
+        final Label health = new Label("HEALTH: ");
+        final Label damage = new Label("DAMAGE: ");
+        final Label armor = new Label("ARMOR: ");
+        final Label inventory = new Label("INVENTORY: ");
 
         ui.add(health, 0, 0);
         ui.add(healthLabel, 1, 0);
@@ -242,7 +240,7 @@ public class Main extends Application {
     }
 
     private void onKeyPressed(KeyEvent keyEvent) {
-        Cell lastPlayerLocation =  player.getCell();
+        final Cell lastPlayerLocation =  player.getCell();
         if (player.isAlive()) {
             switch (keyEvent.getCode()) {
                 case W:
@@ -286,7 +284,7 @@ public class Main extends Application {
         if (player.movingToNextMap()) initNextMap();
     }
 
-    private void checkGameEndConditions() {
+    private void handleGameEndConditions() {
         //TODO: check win condition
 
         if (!player.isAlive()) {
@@ -295,24 +293,22 @@ public class Main extends Application {
     }
 
     private void gameOver() {
-//        monsterTimeline.stop();
-//        borderPane.requestFocus();
-        AlertBox gameOverWindow = createAlertBox("gameOver");
+        final AlertBox gameOverWindow = createAlertBox("gameOver");
         gameOverWindow.display();
     }
 
     private void refresh() {
-        checkGameEndConditions();
+        handleGameEndConditions();
 
         context.setFill(Color.BLACK);
         context.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
-                Cell cell = map.getCell(x, y);
+                final Cell cell = map.getCell(x, y);
                 if (cell.getActor() != null) {
                     Tiles.drawTile(context, cell.getActor(), x, y);
                 } else if (cell.getItem() != null) {
-                        Tiles.drawTile(context, cell.getItem(), x, y);
+                    Tiles.drawTile(context, cell.getItem(), x, y);
                 } else {
                     Tiles.drawTile(context, cell, x, y);
                 }

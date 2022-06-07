@@ -2,20 +2,19 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
-import com.codecool.dungeoncrawl.logic.Drawable;
-import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.util.Directions;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Scorpion extends Actor implements Enemy {
 
+    private static final ActorStats STATS = new ActorStats(80, 20, 20);
+
     public Scorpion(Cell cell) {
         super(cell);
-        this.health = ActorStats.SCORPION.health;
-        this.damage = ActorStats.SCORPION.damage;
-        this.armor = ActorStats.SCORPION.baseArmor;
+        this.health = STATS.health;
+        this.damage = STATS.damage;
+        this.armor = STATS.baseArmor;
     }
 
     @Override
@@ -49,6 +48,7 @@ public class Scorpion extends Actor implements Enemy {
         }
     }
 
+    @Override
     public void executeBehaviour() {
         if (this.isAlive()){
             if (isPlayerAround()){
@@ -58,17 +58,6 @@ public class Scorpion extends Actor implements Enemy {
                 move(directionToMove.dx, directionToMove.dy);
             }
         }
-    }
-
-    @Override
-    public boolean isPlayerAround(){
-        List<Cell> surroundingCells = super.getSurroundingCells();
-
-        for(Cell cell : surroundingCells){
-            Actor otherActor = cell.getActor();
-            if (otherActor instanceof Player){ return true;}
-        }
-        return false;
     }
 
 }

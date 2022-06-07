@@ -2,22 +2,19 @@ package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
-import com.codecool.dungeoncrawl.logic.items.general.Key;
 import com.codecool.dungeoncrawl.logic.util.Directions;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.util.Duration;
 
 import java.util.List;
-import java.util.Random;
 
 public class Skeleton extends Actor implements Enemy {
+
+    private static final ActorStats STATS = new ActorStats(100, 10, 0);
+
     public Skeleton(Cell cell) {
         super(cell);
-        this.health = ActorStats.SKELETON.health;
-        this.damage = ActorStats.SKELETON.damage;
-        this.armor = ActorStats.SKELETON.baseArmor;
+        this.health = STATS.health;
+        this.damage = STATS.damage;
+        this.armor = STATS.baseArmor;
     }
 
     @Override
@@ -40,18 +37,6 @@ public class Skeleton extends Actor implements Enemy {
     }
 
     @Override
-    public boolean isPlayerAround(){
-        List<Cell>  surroundingCells = super.getSurroundingCells();
-
-        for(Cell cell : surroundingCells){
-            Actor otherActor = cell.getActor();
-            if (otherActor instanceof Player){ return true;}
-        }
-        return false;
-    }
-
-
-    @Override
     public void hitActor() {
         List<Cell>  surroundingCells = super.getSurroundingCells();
 
@@ -63,6 +48,7 @@ public class Skeleton extends Actor implements Enemy {
         }
     }
 
+    @Override
     public void executeBehaviour() {
         if (this.isAlive()){
             if (isPlayerAround()){
@@ -73,6 +59,5 @@ public class Skeleton extends Actor implements Enemy {
             }
         }
     }
-
 
 }

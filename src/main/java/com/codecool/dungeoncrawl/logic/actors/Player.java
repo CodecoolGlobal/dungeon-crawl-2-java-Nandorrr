@@ -16,15 +16,17 @@ import java.util.Set;
 
 public class Player extends Actor {
 
+    private static final ActorStats STATS = new ActorStats(200, 10, 20);
+
     private boolean movingToNextMap = false;
 
-    private List<Item> inventory;
+    private final List<Item> inventory;
 
     public Player(Cell cell) {
         super(cell);
-        this.health = ActorStats.PLAYER.health;
-        this.damage = ActorStats.PLAYER.damage;
-        this.armor = ActorStats.PLAYER.baseArmor;
+        this.health = STATS.health;
+        this.damage = STATS.damage;
+        this.armor = STATS.baseArmor;
         inventory = new ArrayList<>();
     }
 
@@ -71,8 +73,8 @@ public class Player extends Actor {
 
         for (String name: itemNamesNoDuplicate) {
             int itemCount = countItemInInventory(name);
-            str.append("  - " + name);
-            str.append(": " + itemCount);
+            str.append("  - ").append(name);
+            str.append(": ").append(itemCount);
             str.append("\n");
         }
 
@@ -91,21 +93,21 @@ public class Player extends Actor {
                 Item item = neighbor.getItem();
                 if (item != null) {
                     if (item instanceof Key) {
-                        hasKey = true;
+                        addKey();
                         inventory.add(item);
                     } else if (item instanceof HealthPotion) {
                         if (this.health <= 80) {
-                            increaseHealth(((HealthPotion) item).getHealingValue());
+                            increaseHealth();
                         } else if (this.health >= 100) {
                             inventory.add(item);
                         } else {
                             this.health = 100;
                         }
                     } else if (item instanceof ChestPlate) {
-                        increaseArmor(((ChestPlate) item).increaseArmor());
+                        increaseArmor(ChestPlate.PROTECTION_VALUE);
                         inventory.add(item);
                     } else if (item instanceof Sword) {
-                        increaseDamage(((Sword) item).getDamage());
+                        increaseDamage(Sword.DAMAGE_VALUE);
                         inventory.add(item);
                     } else if (item instanceof Chest) {
                          item.getCell().setType(CellType.OPEN_CHEST);
@@ -133,8 +135,8 @@ public class Player extends Actor {
         }
     }
 
-    private void increaseHealth(int extraHealth) {
-        this.health += extraHealth;
+    private void increaseHealth() {
+        this.health += HealthPotion.HEALING_VALUE;
     }
 
     private void increaseDamage(int extraDamage) {

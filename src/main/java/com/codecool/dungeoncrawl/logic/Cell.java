@@ -10,7 +10,7 @@ public class Cell implements Drawable {
     private CellType type;
     private Actor actor;
     private Item item;
-    private GameMap gameMap;
+    private final GameMap gameMap;
     private int x, y;
 
     Cell(GameMap gameMap, int x, int y, CellType type) {
@@ -72,7 +72,7 @@ public class Cell implements Drawable {
 
         for (int y = 0; y < mapWidth-1; y++) {
             for (int x = 0; x < mapHeight-1; x++) {
-                Cell currentCell = this.gameMap.getCell(y,x);
+                Cell currentCell = this.gameMap.getCell(y, x);
                 if (currentCell.getType() == CellType.FLOOR && currentCell.getActor() == null) {
                     emptyFloorTiles.add(currentCell);
                 }

@@ -5,7 +5,7 @@ import com.codecool.dungeoncrawl.logic.items.Item;
 
 public class ChestPlate extends Item implements Armor {
 
-    private int protectionValue = 20;
+    public final static int PROTECTION_VALUE = 20;
 
     public ChestPlate(Cell cell) {
         super(cell);
@@ -16,8 +16,4 @@ public class ChestPlate extends Item implements Armor {
         return "chest plate";
     }
 
-    @Override
-    public int increaseArmor() {
-        return protectionValue;
-    }
 }
