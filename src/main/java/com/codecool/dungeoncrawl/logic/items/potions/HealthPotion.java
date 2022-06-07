@@ -5,14 +5,10 @@ import com.codecool.dungeoncrawl.logic.items.Item;
 
 public class HealthPotion extends Item {
 
-    private int healingValue = 20;
+    public final static int HEALING_VALUE = 20;
 
     public HealthPotion(Cell cell) {
         super(cell);
-    }
-
-    public int getHealingValue() {
-        return this.healingValue;
     }
 
     @Override

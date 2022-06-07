@@ -1,12 +1,10 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
 import com.codecool.dungeoncrawl.logic.Cell;
-import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.Drawable;
 import com.codecool.dungeoncrawl.logic.util.Directions;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -29,6 +27,16 @@ public abstract class Actor implements Drawable {
     public abstract void executeBehaviour();
 
     public abstract void hitActor();
+
+    public boolean isPlayerAround(){
+        List<Cell>  surroundingCells = getSurroundingCells();
+
+        for(Cell cell : surroundingCells){
+            Actor otherActor = cell.getActor();
+            if (otherActor instanceof Player){ return true;}
+        }
+        return false;
+    }
 
     protected List<Cell> getSurroundingCells() {
         List<Cell> surroundingCells = new ArrayList<>();

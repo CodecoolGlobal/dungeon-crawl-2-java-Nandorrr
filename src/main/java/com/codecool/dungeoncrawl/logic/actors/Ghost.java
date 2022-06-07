@@ -3,18 +3,19 @@ package com.codecool.dungeoncrawl.logic.actors;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.CellType;
 import com.codecool.dungeoncrawl.logic.GameMap;
-import com.codecool.dungeoncrawl.logic.util.Directions;
 import com.codecool.dungeoncrawl.logic.util.RandomChoose;
 
 import java.util.List;
 
 public class Ghost extends Actor implements Enemy{
 
+    private static final ActorStats STATS = new ActorStats(50, 30, 0);
+
     public Ghost(Cell cell) {
         super(cell);
-        this.health = ActorStats.GHOST.health;
-        this.armor = ActorStats.GHOST.baseArmor;
-        this.damage = ActorStats.GHOST.damage;
+        this.health = STATS.health;
+        this.armor = STATS.baseArmor;
+        this.damage = STATS.damage;
     }
 
     @Override
@@ -23,16 +24,6 @@ public class Ghost extends Actor implements Enemy{
     }
 
     @Override
-    public boolean isPlayerAround(){
-        List<Cell> surroundingCells = super.getSurroundingCells();
-
-        for(Cell cell : surroundingCells){
-            Actor otherActor = cell.getActor();
-            if (otherActor instanceof Player){ return true;}
-        }
-        return false;
-    }
-
     public void executeBehaviour() {
         if (this.isAlive()){
             if (isPlayerAround()){

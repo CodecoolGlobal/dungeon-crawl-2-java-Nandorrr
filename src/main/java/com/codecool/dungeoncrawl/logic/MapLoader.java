@@ -16,19 +16,19 @@ import java.util.Scanner;
 public class MapLoader {
 
     public static GameMap loadMap(String mapFileName) {
-        InputStream is = MapLoader.class.getResourceAsStream(mapFileName);
-        Scanner scanner = new Scanner(is);
-        int width = scanner.nextInt();
-        int height = scanner.nextInt();
+        final InputStream is = MapLoader.class.getResourceAsStream(mapFileName);
+        final Scanner scanner = new Scanner(is);
+        final int width = scanner.nextInt();
+        final int height = scanner.nextInt();
 
         scanner.nextLine(); // empty line
 
         GameMap map = new GameMap(width, height, CellType.EMPTY);
         for (int y = 0; y < height; y++) {
-            String line = scanner.nextLine();
+            final String line = scanner.nextLine();
             for (int x = 0; x < width; x++) {
                 if (x < line.length()) {
-                    Cell cell = map.getCell(x, y);
+                    final Cell cell = map.getCell(x, y);
                     switch (line.charAt(x)) {
                         case ' ':
                             cell.setType(CellType.EMPTY);

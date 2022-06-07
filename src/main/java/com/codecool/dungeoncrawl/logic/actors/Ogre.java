@@ -7,13 +7,15 @@ import com.codecool.dungeoncrawl.logic.util.Directions;
 import java.util.List;
 
 public class Ogre extends Actor implements Enemy {
+
+    private static final ActorStats STATS = new ActorStats(200, 30, 50);
     private Directions previousMove;
 
     public Ogre(Cell cell) {
         super(cell);
-        this.health = ActorStats.OGRE.health;
-        this.damage = ActorStats.OGRE.damage;
-        this.armor = ActorStats.OGRE.baseArmor;
+        this.health = STATS.health;
+        this.damage = STATS.damage;
+        this.armor = STATS.baseArmor;
     }
 
     @Override
@@ -44,17 +46,6 @@ public class Ogre extends Actor implements Enemy {
         }
     }
 
-    public boolean isPlayerAround(){
-        List<Cell>  surroundingCells = super.getSurroundingCells();
-
-        for(Cell cell : surroundingCells){
-            Actor otherActor = cell.getActor();
-            if (otherActor instanceof Player){ return true;}
-        }
-        return false;
-    }
-
-
     @Override
     public void executeBehaviour() {
         Directions left = Directions.LEFT;
@@ -83,12 +74,11 @@ public class Ogre extends Actor implements Enemy {
                             move(left.dx, left.dy);
                         }
                     }
-                    }
-
                 }
             }
         }
     }
+}
 
 
 

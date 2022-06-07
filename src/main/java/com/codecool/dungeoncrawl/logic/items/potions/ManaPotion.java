@@ -5,14 +5,10 @@ import com.codecool.dungeoncrawl.logic.items.Item;
 
 public class ManaPotion extends Item {
 
-    private int manaValue = 20;
+    public final static int MANA_VALUE = 20;
 
     public ManaPotion(Cell cell) {
         super(cell);
-    }
-
-    public int getManaValue() {
-        return this.manaValue;
     }
 
     @Override

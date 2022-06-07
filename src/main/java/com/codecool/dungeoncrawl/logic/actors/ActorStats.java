@@ -1,16 +1,10 @@
 package com.codecool.dungeoncrawl.logic.actors;
 
-public enum ActorStats {
+public class ActorStats {
 
-    PLAYER(200, 10, 20),
-    SKELETON(100, 10, 0),
-    SCORPION(80, 20, 20),
-    OGRE(200, 30, 50),
-    GHOST(50, 30, 0);
-
-    public int health;
-    public int damage;
-    public int baseArmor;
+    public final int health;
+    public final int damage;
+    public final int baseArmor;
 
     ActorStats(int health, int damage, int baseArmor) {
         this.health = health;

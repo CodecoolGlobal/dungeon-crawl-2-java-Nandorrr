@@ -4,15 +4,16 @@ import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class GameMap {
-    private int width;
-    private int height;
-    private Cell[][] cells;
+    private final int width;
+    private final int height;
+    private final Cell[][] cells;
 
     private Player player;
 
-    private ArrayList<Actor> enemyArmy;
+    private final List<Actor> enemyArmy;
 
     public GameMap(int width, int height, CellType defaultCellType) {
         this.width = width;
@@ -41,7 +42,7 @@ public class GameMap {
     public void addToEnemyArmy(Actor enemy){
         enemyArmy.add(enemy);}
 
-    public ArrayList<Actor> getEnemyArmy(){return enemyArmy;}
+    public List<Actor> getEnemyArmy(){return enemyArmy;}
 
     public void removeEnemyFromArmy(Actor enemy){
         if (!(enemy instanceof Player)){
