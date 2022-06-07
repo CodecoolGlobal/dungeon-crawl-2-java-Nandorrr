@@ -6,15 +6,20 @@ import com.codecool.dungeoncrawl.logic.util.Directions;
 
 import java.util.List;
 
-public class Skeleton extends Actor implements Enemy {
+public class Scorpion extends Actor implements Enemy {
 
-    private static final ActorStats STATS = new ActorStats(100, 10, 0);
+    private static final ActorStats STATS = new ActorStats(80, 20, 20);
 
-    public Skeleton(Cell cell) {
+    public Scorpion(Cell cell) {
         super(cell);
         this.health = STATS.health;
         this.damage = STATS.damage;
         this.armor = STATS.baseArmor;
+    }
+
+    @Override
+    public String getTileName() {
+        return "scorpion";
     }
 
     @Override
@@ -29,11 +34,6 @@ public class Skeleton extends Actor implements Enemy {
             cell = nextCell;
         }
 
-    }
-
-    @Override
-    public String getTileName() {
-        return "skeleton";
     }
 
     @Override
