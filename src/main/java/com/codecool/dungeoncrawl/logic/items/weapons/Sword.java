@@ -11,6 +11,10 @@ public class Sword extends Item implements Weapon {
         super(cell);
     }
 
+    public Sword() {
+        super();
+    }
+
     @Override
     public int getValue() {
         return DAMAGE_VALUE;

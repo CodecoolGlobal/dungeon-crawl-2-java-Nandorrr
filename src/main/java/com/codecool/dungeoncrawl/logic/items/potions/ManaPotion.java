@@ -11,6 +11,10 @@ public class ManaPotion extends Item {
         super(cell);
     }
 
+    public ManaPotion() {
+        super();
+    }
+
     @Override
     public int getValue() {
         return MANA_VALUE;

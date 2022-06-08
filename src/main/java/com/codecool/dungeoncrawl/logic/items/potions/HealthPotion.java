@@ -11,6 +11,10 @@ public class HealthPotion extends Item {
         super(cell);
     }
 
+    public HealthPotion() {
+        super();
+    }
+
     @Override
     public int getValue() {
         return HEALING_VALUE;

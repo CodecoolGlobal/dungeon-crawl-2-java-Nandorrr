@@ -9,6 +9,10 @@ public class Jewel extends Item {
         super(cell);
     }
 
+    public Jewel() {
+        super();
+    }
+
     @Override
     public String getTileName() {
         return "jewel";
