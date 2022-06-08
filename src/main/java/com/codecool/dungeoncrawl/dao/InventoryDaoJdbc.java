@@ -36,11 +36,6 @@ public class InventoryDaoJdbc implements InventoryDao {
     }
 
     @Override
-    public void update(Item item, int playerId) {
-        // TODO
-    }
-
-    @Override
     public void delete(int playerId) {
         try (Connection connection = dataSource.getConnection()) {
             String sql = "DELETE FROM inventory WHERE player_id = ?";
@@ -49,12 +44,6 @@ public class InventoryDaoJdbc implements InventoryDao {
         } catch (SQLException exception) {
             throw new RuntimeException(exception);
         }
-    }
-
-    @Override
-    public InventoryModel get(int id) {
-        // TODO
-        return null;
     }
 
     @Override
