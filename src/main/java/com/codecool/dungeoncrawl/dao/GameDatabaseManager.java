@@ -9,6 +9,9 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.sql.Date;
+//import java.util.Date;
+import java.util.Calendar;
 import java.util.List;
 
 public class GameDatabaseManager {
@@ -23,12 +26,17 @@ public class GameDatabaseManager {
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
     }
 
-    public void saveGame(Player player, List<Item> inventory) {
+    public int saveGame(Player player) throws SQLException {
         PlayerModel playerModel = new PlayerModel(player);
         int playerId = playerDao.add(playerModel);
-        InventoryModel inventoryModel = new InventoryModel(inventory);
-        inventory.forEach(item -> inventoryDao.add(item, playerId));
-
+        //InventoryModel inventoryModel = new InventoryModel(inventory);
+        //inventory.forEach(item -> inventoryDao.add(item, playerId));
+        Calendar calendar = Calendar.getInstance();
+        java.util.Date currentDate = calendar.getTime();
+        java.sql.Date date = new java.sql.Date(currentDate.getTime());
+        GameState gameState = new GameState("first", date, playerModel);
+        gameStateDao.add(gameState);
+        return playerId;
     }
 
     public void updateSavedGame() {
