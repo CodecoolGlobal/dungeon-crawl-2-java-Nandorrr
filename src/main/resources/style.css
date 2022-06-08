@@ -15,6 +15,7 @@
 }
 
 .button {
+    -fx-vgap: 130;
     -fx-pref-width: 250px;
     -fx-pref-height: 50px;
     -fx-border-style: none;
@@ -51,17 +52,17 @@
     -fx-text-fill: #fff;
 }
 
-.gameOverWindow, .exitWindow {
+.gameOverWindow, .exitWindow, .saveWindow {
     -fx-background-color: #472D3C;
     -fx-vgap: 50;
     -fx-min-height: 350px;
 }
 
-.gameOverWindow .label, .exitWindow .label, .controlsWindow .label {
+.gameOverWindow .label, .exitWindow .label, .controlsWindow .label, .saveWindow .label {
     -fx-text-alignment: center;
 }
 
-.controlsWindow, .titleContainer, .buttonContainer {
+.controlsWindow, .saveWindow, .titleContainer, .buttonContainer {
     -fx-alignment: center;
 }
 

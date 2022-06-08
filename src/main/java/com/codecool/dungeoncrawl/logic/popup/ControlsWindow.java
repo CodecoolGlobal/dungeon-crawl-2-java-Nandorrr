@@ -33,7 +33,7 @@ public class ControlsWindow extends AlertBox {
         addWindowElements();
 
         Scene scene = new Scene(this.gridPane);
-        scene.getStylesheets().add(Objects.requireNonNull(GameOverWindow.class.getResource("/style.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(ControlsWindow.class.getResource("/style.css")).toExternalForm());
         window.setScene(scene);
 
         return window;

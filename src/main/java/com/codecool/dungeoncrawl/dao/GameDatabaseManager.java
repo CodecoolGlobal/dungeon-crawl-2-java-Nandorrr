@@ -38,6 +38,7 @@ public class GameDatabaseManager {
 
     public void updateSavedGame() {
         // TODO: implement method
+        System.out.println("This was an existing player - update instead of save");
     }
 
     public List<GameState> getAllGameStates() {
