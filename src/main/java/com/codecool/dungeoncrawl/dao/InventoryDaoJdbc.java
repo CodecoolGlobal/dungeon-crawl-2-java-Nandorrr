@@ -41,6 +41,17 @@ public class InventoryDaoJdbc implements InventoryDao {
     }
 
     @Override
+    public void delete(int playerId) {
+        try (Connection connection = dataSource.getConnection()) {
+            String sql = "DELETE FROM inventory WHERE player_id = ?";
+            PreparedStatement prepStat = connection.prepareStatement(sql);
+            prepStat.executeQuery(sql);
+        } catch (SQLException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
+
+    @Override
     public InventoryModel get(int id) {
         // TODO
         return null;
