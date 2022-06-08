@@ -3,14 +3,11 @@ package com.codecool.dungeoncrawl.dao;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.items.Item;
 import com.codecool.dungeoncrawl.model.GameState;
-import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
-import org.postgresql.ds.PGSimpleDataSource;
 
+import org.postgresql.ds.PGSimpleDataSource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.sql.Date;
-//import java.util.Date;
 import java.util.Calendar;
 import java.util.List;
 
@@ -26,16 +23,23 @@ public class GameDatabaseManager {
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
     }
 
-    public int saveGame(Player player) throws SQLException {
+    public int saveGame(Player player) {
         PlayerModel playerModel = new PlayerModel(player);
-        int playerId = playerDao.add(playerModel);
-        //InventoryModel inventoryModel = new InventoryModel(inventory);
-        //inventory.forEach(item -> inventoryDao.add(item, playerId));
+
         Calendar calendar = Calendar.getInstance();
         java.util.Date currentDate = calendar.getTime();
         java.sql.Date date = new java.sql.Date(currentDate.getTime());
+
         GameState gameState = new GameState("first", date, playerModel);
+
+        playerDao.add(playerModel);
         gameStateDao.add(gameState);
+
+        int playerId = playerModel.getId();
+        List<Item> inventory = player.getInventory();
+        inventory.forEach(item -> inventoryDao.add(item, playerId));
+
+
         return playerId;
     }
 
@@ -43,7 +47,7 @@ public class GameDatabaseManager {
         // TODO: implement method
     }
 
-    public List<GameState> getAllGameState() {
+    public List<GameState> getAllGameStates() {
         return gameStateDao.getAll();
     }
 
