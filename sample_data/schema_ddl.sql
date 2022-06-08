@@ -15,8 +15,7 @@ CREATE TABLE player (
 CREATE TABLE inventory (
     id serial PRIMARY KEY,
     player_id INTEGER REFERENCES player(id),
-    item_name text NOT NULL,
-    item_value int NOT NULL
+    item_name text NOT NULL
 );
 
 CREATE TABLE game_state (
