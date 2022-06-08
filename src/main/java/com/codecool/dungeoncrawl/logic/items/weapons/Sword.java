@@ -12,6 +12,11 @@ public class Sword extends Item implements Weapon {
     }
 
     @Override
+    public int getValue() {
+        return DAMAGE_VALUE;
+    }
+
+    @Override
     public String getTileName() {
         return "sword";
     }

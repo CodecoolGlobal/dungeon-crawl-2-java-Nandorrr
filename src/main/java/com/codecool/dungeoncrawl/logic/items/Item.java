@@ -16,4 +16,8 @@ public abstract class Item implements Drawable {
         return cell;
     }
 
+    public int getValue() {
+        return 0;
+    }
+
 }

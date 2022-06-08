@@ -1,23 +1,53 @@
 package com.codecool.dungeoncrawl.dao;
 
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.items.Item;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.List;
 
 public class GameDatabaseManager {
     private PlayerDao playerDao;
+    private InventoryDao inventoryDao;
+    private GameStateDao gameStateDao;
 
     public void setup() throws SQLException {
         DataSource dataSource = connect();
         playerDao = new PlayerDaoJdbc(dataSource);
+        inventoryDao = new InventoryDaoJdbc(dataSource, playerDao);
+        gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
     }
 
-    public void savePlayer(Player player) {
-        PlayerModel model = new PlayerModel(player);
-        playerDao.add(model);
+    public void saveGame(Player player, List<Item> inventory) {
+        PlayerModel playerModel = new PlayerModel(player);
+        int playerId = playerDao.add(playerModel);
+        InventoryModel inventoryModel = new InventoryModel(inventory);
+        inventory.forEach(item -> inventoryDao.add(item, playerId));
+
+    }
+
+    public void updateSavedGame() {
+        // TODO: implement method
+    }
+
+    public List<GameState> getAllGameState() {
+        return gameStateDao.getAll();
+    }
+
+    public boolean doesPlayerExist(String playerName) {
+        List<PlayerModel> players = playerDao.getAll();
+
+        for (PlayerModel player : players) {
+            if (player.getPlayerName().equals(playerName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private DataSource connect() throws SQLException {
