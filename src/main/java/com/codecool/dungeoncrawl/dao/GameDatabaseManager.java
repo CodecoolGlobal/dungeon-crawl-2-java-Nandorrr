@@ -23,18 +23,12 @@ public class GameDatabaseManager {
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
     }
 
-    public void savePlayer(Player player) {
-        PlayerModel model = new PlayerModel(player);
-        playerDao.add(model);
-    }
+    public void saveGame(Player player, List<Item> inventory) {
+        PlayerModel playerModel = new PlayerModel(player);
+        int playerId = playerDao.add(playerModel);
+        InventoryModel inventoryModel = new InventoryModel(inventory);
+        inventory.forEach(item -> inventoryDao.add(item, playerId));
 
-    public void saveInventory(List<Item> inventory) {
-        InventoryModel model = new InventoryModel(inventory);
-        inventoryDao.add(model);
-    }
-
-    public void saveGameState() {
-        // TODO: implement method
     }
 
     public void updateSavedGame() {
