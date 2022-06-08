@@ -10,9 +10,9 @@ public class GameState extends BaseModel {
     private List<String> discoveredMaps = new ArrayList<>();
     private PlayerModel player;
 
-    public GameState(String currentMap, Date savedAt, PlayerModel player) {
+    public GameState(String currentMap, PlayerModel player) {
         this.currentMap = currentMap;
-        this.savedAt = savedAt;
+//        this.savedAt = savedAt;
         this.player = player;
     }
 

@@ -21,11 +21,11 @@ public class GameStateDaoJdbc implements GameStateDao {
     @Override
     public void add(GameState state) {
         try(Connection conn = dataSource.getConnection()){
-            String sql = "INSERT INTO game_state (current_map, saved_at, player_id) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO game_state (current_map,  player_id) VALUES (?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1,state.getCurrentMap());
-            statement.setDate(2, state.getSavedAt());
-            statement.setInt(3, state.getPlayer().getId());
+//            statement.setDate(2, state.getSavedAt());
+            statement.setInt(2, state.getPlayer().getId());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
@@ -64,7 +64,7 @@ public class GameStateDaoJdbc implements GameStateDao {
                 String currentMap = resultSet.getString(3);
                 Date savedAt = resultSet.getDate(4);
                 PlayerModel player = playerDao.get(playerId);
-                GameState gameState = new GameState(currentMap, savedAt, player);
+                GameState gameState = new GameState(currentMap, player);
                 return gameState;
         } catch (SQLException e){
             throw new RuntimeException(e);
@@ -83,7 +83,7 @@ public class GameStateDaoJdbc implements GameStateDao {
                 String currentMap = resultSet.getString(3);
                 Date savedAt = resultSet.getDate(4);
                 PlayerModel player = playerDao.get(playerId);
-                GameState state = new GameState(currentMap, savedAt, player);
+                GameState state = new GameState(currentMap, player);
                 state.setId(resultSet.getInt(1));
                 listOfGameStates.add(state);
             }
