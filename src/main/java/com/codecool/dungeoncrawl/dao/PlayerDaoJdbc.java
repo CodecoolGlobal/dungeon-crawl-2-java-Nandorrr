@@ -15,7 +15,7 @@ public class PlayerDaoJdbc implements PlayerDao {
     }
 
     @Override
-    public void add(PlayerModel player) {
+    public int add(PlayerModel player) {
         try (Connection conn = dataSource.getConnection()) {
             String sql = "INSERT INTO player (player_name, health) VALUES (?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -25,13 +25,14 @@ public class PlayerDaoJdbc implements PlayerDao {
             ResultSet resultSet = statement.getGeneratedKeys();
             resultSet.next();
             player.setId(resultSet.getInt(1));
+            return resultSet.getInt(1);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
 
     @Override
-    public void update(PlayerModel player) {
+    public int update(PlayerModel player) {
         try (Connection conn = dataSource.getConnection()) {
             String sql = " UPDATE player SET health = ?, armor = ?, damage = ? WHERE id = ?";
             PreparedStatement st = conn.prepareStatement(sql);
@@ -40,6 +41,7 @@ public class PlayerDaoJdbc implements PlayerDao {
             st.setInt(3, player.getDamage());
             st.setInt(4, player.getId());
             st.executeUpdate();
+            return player.getId();
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
