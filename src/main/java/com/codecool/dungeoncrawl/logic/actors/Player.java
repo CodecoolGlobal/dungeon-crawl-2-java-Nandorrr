@@ -24,13 +24,23 @@ public class Player extends Actor {
 
     private final List<Item> inventory;
 
+    public Player(Cell cell, String name, int health, int damage, int armor, List<Item> inventory) {
+        super(cell);
+        this.name = name;
+        this.health = health;
+        this.damage = damage;
+        this.armor = armor;
+        this.inventory = inventory;
+    }
+
+
     public Player(Cell cell, String name) {
         super(cell);
         this.name = name;
         this.health = STATS.health;
         this.damage = STATS.damage;
         this.armor = STATS.baseArmor;
-        inventory = new ArrayList<>();
+        this.inventory = new ArrayList<>();
     }
 
     public String getName() {
