@@ -6,6 +6,7 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.items.Item;
 import com.codecool.dungeoncrawl.logic.popup.AlertBox;
 import com.codecool.dungeoncrawl.logic.popup.ControlsWindow;
 import com.codecool.dungeoncrawl.logic.popup.ExitWindow;
@@ -34,7 +35,7 @@ import java.util.List;
 import java.util.Objects;
 import java.sql.SQLException;
 
-public class Main extends Application {
+public class Main extends Application  {
 
     private static final String QUIT_LABEL = "quit";
     private static final String CONTROLS_LABEL = "controls";
@@ -79,7 +80,7 @@ public class Main extends Application {
         moveEnemiesOnMap();
     }
 
-    private void initGameWindow() {
+    private void initGameWindow() throws SQLException{
         borderPane = new BorderPane();
         GridPane inventoryBar = createInventoryBar();
         VBox menu = createSideMenuBar();
@@ -95,7 +96,19 @@ public class Main extends Application {
 
         this.stage.setScene(scene);
         refresh();
-        scene.setOnKeyPressed(this::onKeyPressed);
+
+        scene.setOnKeyPressed(keyEvent -> {
+            try {
+                onKeyPressed(keyEvent);
+            } catch (SQLException e) {
+                try {
+                    throw new SQLException(e);
+                } catch (SQLException ex) {
+                    throw new RuntimeException(ex);
+                }
+            }
+        }
+        );
 
         this.stage.setTitle("Dungeon Crawl");
         this.stage.show();
@@ -257,8 +270,9 @@ public class Main extends Application {
         }
     }
 
-    private void onKeyPressed(KeyEvent keyEvent) {
+    private void onKeyPressed(KeyEvent keyEvent) throws SQLException {
         final Cell lastPlayerLocation =  player.getCell();
+        GameDatabaseManager dbManager = new GameDatabaseManager();
         if (player.isAlive()) {
             switch (keyEvent.getCode()) {
                 case W:
@@ -295,6 +309,13 @@ public class Main extends Application {
                     break;
                 case SPACE:
                     player.hitActor();
+                    refresh();
+                    break;
+
+                case U:
+                    dbManager.setup();
+                    dbManager.saveGame(player);
+                    System.out.println("Save was finished");
                     refresh();
                     break;
             }

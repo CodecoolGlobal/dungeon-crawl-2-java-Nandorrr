@@ -19,7 +19,7 @@ CREATE TABLE inventory (
 );
 
 CREATE TABLE game_state (
-    id serial NOT NULL PRIMARY KEY,
+    id serial PRIMARY KEY,
     current_map text NOT NULL,
     saved_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     player_id integer NOT NULL
