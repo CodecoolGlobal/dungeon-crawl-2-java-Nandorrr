@@ -12,6 +12,11 @@ public class HealthPotion extends Item {
     }
 
     @Override
+    public int getValue() {
+        return HEALING_VALUE;
+    }
+
+    @Override
     public String getTileName() {
         return "health potion";
     }

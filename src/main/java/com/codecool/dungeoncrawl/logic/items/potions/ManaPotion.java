@@ -12,6 +12,11 @@ public class ManaPotion extends Item {
     }
 
     @Override
+    public int getValue() {
+        return MANA_VALUE;
+    }
+
+    @Override
     public String getTileName() {
         return "mana potion";
     }
