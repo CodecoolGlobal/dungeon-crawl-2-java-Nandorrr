@@ -6,17 +6,17 @@ import java.util.List;
 
 public class InventoryModel extends BaseModel {
 
-    private List<Item> inventory;
+    private List<Item> inventoryItems;
 
-    public InventoryModel(List<Item> inventory) {
-        this.inventory = inventory;
+    public InventoryModel(List<Item> inventoryItems) {
+        this.inventoryItems = inventoryItems;
     }
 
-    public List<Item> getInventory() {
-        return this.inventory;
+    public List<Item> getInventoryItems() {
+        return this.inventoryItems;
     }
 
-    public void setInventory(List<Item> inventory) {
-        this.inventory = inventory;
+    public void setInventoryItems(List<Item> inventoryItems) {
+        this.inventoryItems = inventoryItems;
     }
 }
