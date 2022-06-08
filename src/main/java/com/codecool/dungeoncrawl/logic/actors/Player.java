@@ -47,6 +47,10 @@ public class Player extends Actor {
         return name;
     }
 
+    public List<Item> getInventory() {
+        return inventory;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
