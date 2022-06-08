@@ -9,6 +9,10 @@ public class Coin extends Item {
         super(cell);
     }
 
+    public Coin() {
+        super();
+    }
+
     @Override
     public String getTileName() {
         return "coin";

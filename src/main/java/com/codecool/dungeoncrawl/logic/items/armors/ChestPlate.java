@@ -11,6 +11,10 @@ public class ChestPlate extends Item implements Armor {
         super(cell);
     }
 
+    public ChestPlate() {
+        super();
+    }
+
     @Override
     public int getValue() {
         return PROTECTION_VALUE;

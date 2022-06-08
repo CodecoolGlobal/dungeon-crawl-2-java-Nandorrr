@@ -1,8 +1,15 @@
 package com.codecool.dungeoncrawl.dao;
 
 import com.codecool.dungeoncrawl.logic.items.Item;
+import com.codecool.dungeoncrawl.logic.items.armors.ChestPlate;
+import com.codecool.dungeoncrawl.logic.items.general.Chest;
+import com.codecool.dungeoncrawl.logic.items.general.Coin;
+import com.codecool.dungeoncrawl.logic.items.general.Jewel;
+import com.codecool.dungeoncrawl.logic.items.general.Key;
+import com.codecool.dungeoncrawl.logic.items.potions.HealthPotion;
+import com.codecool.dungeoncrawl.logic.items.potions.ManaPotion;
+import com.codecool.dungeoncrawl.logic.items.weapons.Sword;
 import com.codecool.dungeoncrawl.model.InventoryModel;
-import com.codecool.dungeoncrawl.model.PlayerModel;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -11,22 +18,19 @@ import java.util.List;
 
 public class InventoryDaoJdbc implements InventoryDao {
 
-    private DataSource dataSource;
-    private PlayerDao playerDao;
+    private final DataSource dataSource;
 
-    public InventoryDaoJdbc(DataSource dataSource, PlayerDao playerDao) {
+    public InventoryDaoJdbc(DataSource dataSource) {
         this.dataSource = dataSource;
-        this.playerDao = playerDao;
     }
 
     @Override
     public void add(Item item, int playerId) {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "INSERT INTO inventory (player_id, item_name, item_value) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO inventory (player_id, item_name) VALUES (?, ?)";
             PreparedStatement prepStat = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             prepStat.setInt(1, playerId);
             prepStat.setString(2, item.getTileName());
-            prepStat.setInt(3, item.getValue());
             prepStat.executeUpdate();
             ResultSet resultSet = prepStat.getGeneratedKeys();
             resultSet.next();
@@ -36,39 +40,57 @@ public class InventoryDaoJdbc implements InventoryDao {
     }
 
     @Override
-    public void update(Item item, int playerId) {
-        // TODO
-    }
-
-    @Override
-    public InventoryModel get(int id) {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public List<InventoryModel> getAll() {
+    public void delete(int playerId) {
         try (Connection connection = dataSource.getConnection()) {
-            // FIRST STEP - player_id, item_name, item_value
-            String sql = "SELECT player_id, item_name, item_value FROM inventory";
-            ResultSet resultSet = connection.createStatement().executeQuery(sql);
+            String sql = "DELETE FROM inventory WHERE player_id = ?";
+            PreparedStatement prepStat = connection.prepareStatement(sql);
+            prepStat.setInt(1, playerId);
+            prepStat.executeQuery(sql);
+        } catch (SQLException exception) {
+            throw new RuntimeException(exception);
+        }
+    }
 
-            List<Item> result = new ArrayList<>();
+    @Override
+    public InventoryModel getAll(int playerId) {
+        try (Connection connection = dataSource.getConnection()) {
+            String sql = "SELECT item_name FROM inventory WHERE player_id = ?";
+            PreparedStatement prepStat = connection.prepareStatement(sql);
+            prepStat.setInt(1, playerId);
+            ResultSet resultSet = prepStat.executeQuery(sql);
+
+            List<Item> inventoryItems = new ArrayList<>();
             while (resultSet.next()) {
-                // SECOND STEP - read all data from result set
-                int playerId = resultSet.getInt(1);
-                String itemName = resultSet.getString(2);
-                int itemValue = resultSet.getInt(3);
+                String itemName = resultSet.getString(1);
 
-                // THIRD STEP - find player with id == authorId
-                PlayerModel playerModel = playerDao.get(playerId);
-
-                // FOURTH STEP - create a new InventoryModel class instance and add it to result list.
-//                Book book = new Book(author, title);
-//                book.setId(id);
-//                result.add(book);
+                if (itemName.equalsIgnoreCase("chest plate")) {
+                    ChestPlate chestPlate = new ChestPlate();
+                    inventoryItems.add(chestPlate);
+                } else if (itemName.equalsIgnoreCase("chest")) {
+                    Chest chest = new Chest();
+                    inventoryItems.add(chest);
+                } else if (itemName.equalsIgnoreCase("coin")) {
+                    Coin coin = new Coin();
+                    inventoryItems.add(coin);
+                } else if (itemName.equalsIgnoreCase("jewel")) {
+                    Jewel jewel = new Jewel();
+                    inventoryItems.add(jewel);
+                } else if (itemName.equalsIgnoreCase("key")) {
+                    Key key = new Key();
+                    inventoryItems.add(key);
+                } else if (itemName.equalsIgnoreCase("health potion")) {
+                    HealthPotion healthPotion = new HealthPotion();
+                    inventoryItems.add(healthPotion);
+                } else if (itemName.equalsIgnoreCase("mana potion")) {
+                    ManaPotion manaPotion = new ManaPotion();
+                    inventoryItems.add(manaPotion);
+                } else if (itemName.equalsIgnoreCase("sword")) {
+                    Sword sword = new Sword();
+                    inventoryItems.add(sword);
+                }
             }
-            return null;
+            InventoryModel inventoryModel = new InventoryModel(inventoryItems);
+            return inventoryModel;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

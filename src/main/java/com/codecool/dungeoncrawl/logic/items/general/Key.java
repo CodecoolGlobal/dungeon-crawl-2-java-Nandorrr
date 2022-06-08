@@ -9,6 +9,10 @@ public class Key extends Item {
         super(cell);
     }
 
+    public Key() {
+        super();
+    }
+
     @Override
     public String getTileName() {
         return "key";

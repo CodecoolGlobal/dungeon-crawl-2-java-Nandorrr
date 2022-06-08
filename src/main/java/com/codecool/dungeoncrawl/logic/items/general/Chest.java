@@ -9,6 +9,10 @@ public class Chest extends Item {
         super(cell);
     }
 
+    public Chest() {
+        super();
+    }
+
     @Override
     public String getTileName() {
         return "chest";
