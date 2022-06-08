@@ -29,12 +29,7 @@ public class GameDatabaseManager {
     public int saveGame(Player player) throws SQLException {
         PlayerModel playerModel = new PlayerModel(player);
         int playerId = playerDao.add(playerModel);
-        //InventoryModel inventoryModel = new InventoryModel(inventory);
-        //inventory.forEach(item -> inventoryDao.add(item, playerId));
-        Calendar calendar = Calendar.getInstance();
-        java.util.Date currentDate = calendar.getTime();
-        java.sql.Date date = new java.sql.Date(currentDate.getTime());
-        GameState gameState = new GameState("first", date, playerModel);
+        GameState gameState = new GameState("first", playerModel);
         gameStateDao.add(gameState);
         return playerId;
     }
