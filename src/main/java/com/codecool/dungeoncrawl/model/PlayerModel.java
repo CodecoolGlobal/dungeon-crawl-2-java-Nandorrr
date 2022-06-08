@@ -1,25 +1,32 @@
 package com.codecool.dungeoncrawl.model;
 
+import com.codecool.dungeoncrawl.logic.actors.ActorStats;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 
 public class PlayerModel extends BaseModel {
-    private String playerName;
-    private int hp;
-    private int x;
-    private int y;
+    private final String playerName;
+    private int health;
+    private int damage;
+    private int armor;
 
-    public PlayerModel(String playerName, int x, int y) {
+
+    public PlayerModel(String playerName, int health, int damage, int armor) {
         this.playerName = playerName;
-        this.x = x;
-        this.y = y;
+        this.health = health;
+        this.damage = damage;
+        this.armor = armor;
+
     }
+
 
     public PlayerModel(Player player) {
         this.playerName = player.getName();
-        this.x = player.getX();
-        this.y = player.getY();
+        this.health = player.getHealth();
+        this.damage = player.getDamage();
+        this.armor = player.getArmor();
 
-        this.hp = player.getHealth();
+
+
 
     }
 
@@ -27,31 +34,28 @@ public class PlayerModel extends BaseModel {
         return playerName;
     }
 
-    public void setPlayerName(String playerName) {
-        this.playerName = playerName;
+
+    public int getHealth() {
+        return health;
     }
 
-    public int getHp() {
-        return hp;
+    public void setHealth(int health) {
+        this.health = health;
     }
 
-    public void setHp(int hp) {
-        this.hp = hp;
+    public int getDamage() {
+        return damage;
     }
 
-    public int getX() {
-        return x;
+    public int getArmor() {
+        return armor;
     }
 
-    public void setX(int x) {
-        this.x = x;
+    public void setDamage(int damage) {
+        this.damage = damage;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public void setY(int y) {
-        this.y = y;
+    public void setArmor(int armor) {
+        this.armor = armor;
     }
 }
