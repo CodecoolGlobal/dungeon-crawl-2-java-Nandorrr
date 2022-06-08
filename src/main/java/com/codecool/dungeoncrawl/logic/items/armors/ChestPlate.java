@@ -12,6 +12,11 @@ public class ChestPlate extends Item implements Armor {
     }
 
     @Override
+    public int getValue() {
+        return PROTECTION_VALUE;
+    }
+
+    @Override
     public String getTileName() {
         return "chest plate";
     }
