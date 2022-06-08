@@ -8,7 +8,6 @@ import com.codecool.dungeoncrawl.model.PlayerModel;
 import org.postgresql.ds.PGSimpleDataSource;
 import javax.sql.DataSource;
 import java.sql.SQLException;
-import java.util.Calendar;
 import java.util.List;
 
 public class GameDatabaseManager {
@@ -25,12 +24,7 @@ public class GameDatabaseManager {
 
     public int saveGame(Player player) {
         PlayerModel playerModel = new PlayerModel(player);
-
-        Calendar calendar = Calendar.getInstance();
-        java.util.Date currentDate = calendar.getTime();
-        java.sql.Date date = new java.sql.Date(currentDate.getTime());
-
-        GameState gameState = new GameState("first", date, playerModel);
+        GameState gameState = new GameState("first", playerModel);
 
         playerDao.add(playerModel);
         gameStateDao.add(gameState);
@@ -38,7 +32,6 @@ public class GameDatabaseManager {
         int playerId = playerModel.getId();
         List<Item> inventory = player.getInventory();
         inventory.forEach(item -> inventoryDao.add(item, playerId));
-
 
         return playerId;
     }
