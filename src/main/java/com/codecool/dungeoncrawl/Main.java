@@ -6,12 +6,7 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
-import com.codecool.dungeoncrawl.logic.items.Item;
-import com.codecool.dungeoncrawl.logic.popup.AlertBox;
-import com.codecool.dungeoncrawl.logic.popup.ControlsWindow;
-import com.codecool.dungeoncrawl.logic.popup.ExitWindow;
-import com.codecool.dungeoncrawl.logic.popup.GameOverWindow;
-import javafx.geometry.Insets;
+import com.codecool.dungeoncrawl.logic.popup.*;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -39,7 +34,10 @@ public class Main extends Application  {
 
     private static final String QUIT_LABEL = "quit";
     private static final String CONTROLS_LABEL = "controls";
-    private static final String GAMEOVER_LABEL = "gameOver";
+    private static final String GAME_OVER_LABEL = "gameOver";
+    private static final String NEW_GAME_LABEL = "new game";
+    private static final String SAVE_LABEL = "save game";
+    private static final String LOAD_LABEL = "load game";
     private final List<String> mapFileNames = addMapNames();
     private final Timeline monsterTimeline = new Timeline();
     private int currentMapIndex = 0;
@@ -189,9 +187,9 @@ public class Main extends Application  {
         final Button quit = new Button("QUIT");
 
         newGame.setDisable(true);
-        saveGame.setDisable(true);
         loadGame.setDisable(true);
 
+        addButtonEventListener(saveGame);
         addButtonEventListener(controls);
         addButtonEventListener(quit);
 
@@ -203,16 +201,20 @@ public class Main extends Application  {
     private void addButtonEventListener(Button button) {
         if (button.getText().equalsIgnoreCase(QUIT_LABEL)) {
             button.setOnAction(e -> {
-                makeAlertBox(QUIT_LABEL);
+                openAlertBox(QUIT_LABEL);
             });
         } else if (button.getText().equalsIgnoreCase(CONTROLS_LABEL)) {
             button.setOnAction(e -> {
-                makeAlertBox(CONTROLS_LABEL);
+                openAlertBox(CONTROLS_LABEL);
+            });
+        } else if (button.getText().equalsIgnoreCase(SAVE_LABEL)) {
+            button.setOnAction(e -> {
+                openAlertBox(SAVE_LABEL);
             });
         }
     }
 
-    private void makeAlertBox(String boxType) {
+    private void openAlertBox(String boxType) {
         borderPane.requestFocus();
         monsterTimeline.pause();
         AlertBox alertBox = createAlertBox(boxType);
@@ -225,10 +227,13 @@ public class Main extends Application  {
             case QUIT_LABEL:
                 return new ExitWindow("Quit Game", "Are you sure you want to quit?\n" +
                         "All unsaved progress will be lost.", "exitWindow");
-            case GAMEOVER_LABEL:
+            case GAME_OVER_LABEL:
                 return new GameOverWindow("Game Over", "Your journey ends here...", "gameOverWindow");
             case CONTROLS_LABEL:
                 return new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
+            case SAVE_LABEL:
+                return new SaveWindow("Save Game", "To save your current game state, click SAVE.",
+                        "saveWindow", dbManager, player);
             default:
                 throw new IllegalArgumentException("Invalid alert box type: " + alertBoxType);
         }
