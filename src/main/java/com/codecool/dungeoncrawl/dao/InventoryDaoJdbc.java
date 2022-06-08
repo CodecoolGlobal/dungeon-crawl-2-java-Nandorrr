@@ -10,7 +10,6 @@ import com.codecool.dungeoncrawl.logic.items.potions.HealthPotion;
 import com.codecool.dungeoncrawl.logic.items.potions.ManaPotion;
 import com.codecool.dungeoncrawl.logic.items.weapons.Sword;
 import com.codecool.dungeoncrawl.model.InventoryModel;
-import com.codecool.dungeoncrawl.model.PlayerModel;
 
 import javax.sql.DataSource;
 import java.sql.*;
@@ -28,11 +27,10 @@ public class InventoryDaoJdbc implements InventoryDao {
     @Override
     public void add(Item item, int playerId) {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "INSERT INTO inventory (player_id, item_name, item_value) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO inventory (player_id, item_name) VALUES (?, ?)";
             PreparedStatement prepStat = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             prepStat.setInt(1, playerId);
             prepStat.setString(2, item.getTileName());
-            prepStat.setInt(3, item.getValue());
             prepStat.executeUpdate();
             ResultSet resultSet = prepStat.getGeneratedKeys();
             resultSet.next();
