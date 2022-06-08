@@ -8,5 +8,5 @@ import java.util.List;
 public interface InventoryDao {
     void add(Item item, int playerId);
     void delete(int playerId);
-    List<InventoryModel> getAll();
+    InventoryModel getAll(int playerId);
 }
