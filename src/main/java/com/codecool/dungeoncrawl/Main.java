@@ -1,12 +1,16 @@
 package com.codecool.dungeoncrawl;
 
 import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
+import com.codecool.dungeoncrawl.dao.PlayerDao;
 import com.codecool.dungeoncrawl.logic.Cell;
 import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.popup.*;
+import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
+import com.codecool.dungeoncrawl.model.PlayerModel;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -43,7 +47,7 @@ public class Main extends Application  {
     private int currentMapIndex = 0;
     private String mapFileName = mapFileNames.get(currentMapIndex);
     private GameMap map = MapLoader.loadMap(mapFileName);
-    private final Player player = map.getPlayer();
+    private  Player player = map.getPlayer();
     private Stage stage;
     private ScrollPane scrollPane = new ScrollPane();
     private BorderPane borderPane;
@@ -64,7 +68,7 @@ public class Main extends Application  {
 
     private List<String> addMapNames() {
         List<String> fileNames = new ArrayList<>();
-        fileNames.add("/map.txt");
+        fileNames.add("/map1.txt");
         fileNames.add("/map2.txt");
         fileNames.add("/map3.txt");
         return fileNames;
@@ -381,4 +385,43 @@ public class Main extends Application  {
         }
         System.exit(0);
     }
+
+    private void loadGame(GameState gameState) {
+        currentMapIndex = gameState.getMapIndex();
+        mapFileName = gameState.getCurrentMap();
+        map = MapLoader.loadMap(mapFileName);
+        final Cell cell = map.getPlayer().getCell();
+        player = PlayerModelToPlayer(gameState.getPlayer(), cell, gameState.getInventory());
+
+        player.setCell(cell);
+        map.setPlayer(player);
+
+        WORLD_SIZE_X = map.getWidth() * Tiles.TILE_WIDTH;
+        WORLD_SIZE_Y = map.getHeight() * Tiles.TILE_WIDTH;
+
+        canvas = new Canvas(WORLD_SIZE_X, WORLD_SIZE_Y);
+
+        context = canvas.getGraphicsContext2D();
+
+        scrollPane = new ScrollPane();
+
+        initScrollPane();
+
+        borderPane.setCenter(scrollPane);
+
+        player.setMovingToNextMap(false);
+
+        moveEnemiesOnMap();
+
+        borderPane.requestFocus();
+
+        refresh();
+
+    }
+
+    private Player PlayerModelToPlayer(PlayerModel playerModel, Cell cell, InventoryModel inventory){
+        return new Player(cell, playerModel.getPlayerName(), playerModel.getHealth(), playerModel.getDamage(), playerModel.getArmor(), inventory.getInventoryItems())
+
+    }
+
 }
