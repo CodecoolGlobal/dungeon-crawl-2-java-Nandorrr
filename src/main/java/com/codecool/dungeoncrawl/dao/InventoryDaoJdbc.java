@@ -57,42 +57,46 @@ public class InventoryDaoJdbc implements InventoryDao {
             String sql = "SELECT item_name FROM inventory WHERE player_id = ?";
             PreparedStatement prepStat = connection.prepareStatement(sql);
             prepStat.setInt(1, playerId);
-            ResultSet resultSet = prepStat.executeQuery(sql);
+            ResultSet resultSet = prepStat.executeQuery();
 
-            List<Item> inventoryItems = new ArrayList<>();
-            while (resultSet.next()) {
-                String itemName = resultSet.getString(1);
-
-                if (itemName.equalsIgnoreCase("chest plate")) {
-                    ChestPlate chestPlate = new ChestPlate();
-                    inventoryItems.add(chestPlate);
-                } else if (itemName.equalsIgnoreCase("chest")) {
-                    Chest chest = new Chest();
-                    inventoryItems.add(chest);
-                } else if (itemName.equalsIgnoreCase("coin")) {
-                    Coin coin = new Coin();
-                    inventoryItems.add(coin);
-                } else if (itemName.equalsIgnoreCase("jewel")) {
-                    Jewel jewel = new Jewel();
-                    inventoryItems.add(jewel);
-                } else if (itemName.equalsIgnoreCase("key")) {
-                    Key key = new Key();
-                    inventoryItems.add(key);
-                } else if (itemName.equalsIgnoreCase("health potion")) {
-                    HealthPotion healthPotion = new HealthPotion();
-                    inventoryItems.add(healthPotion);
-                } else if (itemName.equalsIgnoreCase("mana potion")) {
-                    ManaPotion manaPotion = new ManaPotion();
-                    inventoryItems.add(manaPotion);
-                } else if (itemName.equalsIgnoreCase("sword")) {
-                    Sword sword = new Sword();
-                    inventoryItems.add(sword);
-                }
-            }
-            InventoryModel inventoryModel = new InventoryModel(inventoryItems);
-            return inventoryModel;
+            List<Item> inventoryItems = getItems(resultSet);
+            return new InventoryModel(inventoryItems);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private List<Item> getItems(ResultSet resultSet) throws SQLException {
+        List<Item> inventoryItems = new ArrayList<>();
+        while (resultSet.next()) {
+            String itemName = resultSet.getString(1);
+
+            if (itemName.equalsIgnoreCase("chest plate")) {
+                ChestPlate chestPlate = new ChestPlate();
+                inventoryItems.add(chestPlate);
+            } else if (itemName.equalsIgnoreCase("chest")) {
+                Chest chest = new Chest();
+                inventoryItems.add(chest);
+            } else if (itemName.equalsIgnoreCase("coin")) {
+                Coin coin = new Coin();
+                inventoryItems.add(coin);
+            } else if (itemName.equalsIgnoreCase("jewel")) {
+                Jewel jewel = new Jewel();
+                inventoryItems.add(jewel);
+            } else if (itemName.equalsIgnoreCase("key")) {
+                Key key = new Key();
+                inventoryItems.add(key);
+            } else if (itemName.equalsIgnoreCase("health potion")) {
+                HealthPotion healthPotion = new HealthPotion();
+                inventoryItems.add(healthPotion);
+            } else if (itemName.equalsIgnoreCase("mana potion")) {
+                ManaPotion manaPotion = new ManaPotion();
+                inventoryItems.add(manaPotion);
+            } else if (itemName.equalsIgnoreCase("sword")) {
+                Sword sword = new Sword();
+                inventoryItems.add(sword);
+            }
+        }
+        return inventoryItems;
     }
 }
