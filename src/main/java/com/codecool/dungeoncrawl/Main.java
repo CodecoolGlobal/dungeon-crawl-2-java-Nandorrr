@@ -43,7 +43,7 @@ public class Main extends Application  {
     private static final String SAVE_LABEL = "save game";
     private static final String LOAD_LABEL = "load game";
     private final List<String> mapFileNames = addMapNames();
-    private final Timeline monsterTimeline = new Timeline();
+    private Timeline monsterTimeline = new Timeline();
     private int currentMapIndex = 0;
     private String mapFileName = mapFileNames.get(currentMapIndex);
     private GameMap map = MapLoader.loadMap(mapFileName);
@@ -191,9 +191,9 @@ public class Main extends Application  {
         final Button quit = new Button("QUIT");
 
         newGame.setDisable(true);
-        loadGame.setDisable(true);
 
         addButtonEventListener(saveGame);
+        addButtonEventListener(loadGame);
         addButtonEventListener(controls);
         addButtonEventListener(quit);
 
@@ -215,6 +215,10 @@ public class Main extends Application  {
             button.setOnAction(e -> {
                 openAlertBox(SAVE_LABEL);
             });
+        } else if (button.getText().equalsIgnoreCase(LOAD_LABEL)) {
+            button.setOnAction(e -> {
+                openAlertBox(LOAD_LABEL);
+            });
         }
     }
 
@@ -222,7 +226,13 @@ public class Main extends Application  {
         borderPane.requestFocus();
         monsterTimeline.pause();
         AlertBox alertBox = createAlertBox(boxType);
-        alertBox.display();
+        if (boxType == LOAD_LABEL) {
+            int gameStateId = alertBox.displayAndReturn();
+            GameState chosenGameState = dbManager.getGameStateById(gameStateId);
+            if (chosenGameState != null) loadGame(chosenGameState);
+        } else {
+            alertBox.display();
+        }
         monsterTimeline.play();
     }
 
@@ -238,6 +248,9 @@ public class Main extends Application  {
             case SAVE_LABEL:
                 return new SaveWindow("Save Game", "To save your current game state, click SAVE.",
                         "saveWindow", dbManager, player);
+            case LOAD_LABEL:
+                return new LoadWindow("Load Game", "Choose a game state you wish to load: ",
+                        "loadWindow", dbManager);
             default:
                 throw new IllegalArgumentException("Invalid alert box type: " + alertBoxType);
         }
@@ -411,6 +424,8 @@ public class Main extends Application  {
 
         player.setMovingToNextMap(false);
 
+        monsterTimeline = new Timeline();
+
         moveEnemiesOnMap();
 
         borderPane.requestFocus();
@@ -420,7 +435,7 @@ public class Main extends Application  {
     }
 
     private Player PlayerModelToPlayer(PlayerModel playerModel, Cell cell, InventoryModel inventory){
-        return new Player(cell, playerModel.getPlayerName(), playerModel.getHealth(), playerModel.getDamage(), playerModel.getArmor(), inventory.getInventoryItems())
+        return new Player(cell, playerModel.getPlayerName(), playerModel.getHealth(), playerModel.getDamage(), playerModel.getArmor(), inventory.getInventoryItems());
 
     }
 
