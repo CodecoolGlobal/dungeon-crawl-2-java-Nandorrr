@@ -7,6 +7,8 @@ import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.logic.popup.*;
+import com.codecool.dungeoncrawl.logic.util.CurrentTime;
+import com.codecool.dungeoncrawl.logic.util.WriteToFiles;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -25,9 +27,11 @@ import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.sql.SQLException;
 
 public class Main extends Application  {
@@ -98,7 +102,7 @@ public class Main extends Application  {
         scene.setOnKeyPressed(keyEvent -> {
             try {
                 onKeyPressed(keyEvent);
-            } catch (SQLException e) {
+            } catch (SQLException | IOException e) {
                 try {
                     throw new SQLException(e);
                 } catch (SQLException ex) {
@@ -275,9 +279,18 @@ public class Main extends Application  {
         }
     }
 
-    private void onKeyPressed(KeyEvent keyEvent) throws SQLException {
+    private void onKeyPressed(KeyEvent keyEvent) throws SQLException, IOException {
         final Cell lastPlayerLocation =  player.getCell();
+
+        //Nandi's dirt was left here. Shame on him.
         GameDatabaseManager dbManager = new GameDatabaseManager();
+        WriteToFiles writeToFiles = new WriteToFiles();
+        CurrentTime currentTime= new CurrentTime();
+        String date = currentTime.getCurrentDateInString();
+
+
+        String filename = mapFileName + date;
+        String filePath = writeToFiles.fileCreater(filename);
         if (player.isAlive()) {
             switch (keyEvent.getCode()) {
                 case W:
@@ -320,6 +333,8 @@ public class Main extends Application  {
                 case U:
                     dbManager.setup();
                     dbManager.saveGame(player);
+
+                    writeToFiles.writeInTheFile(map.serializeMap(), filePath);
                     System.out.println("Save was finished");
                     refresh();
                     break;
