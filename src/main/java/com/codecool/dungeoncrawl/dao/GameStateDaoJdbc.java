@@ -1,7 +1,7 @@
 package com.codecool.dungeoncrawl.dao;
 
-import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 
 import javax.sql.DataSource;
@@ -10,13 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateDaoJdbc implements GameStateDao {
+
     private  DataSource dataSource;
-
     private PlayerDao playerDao;
+    private InventoryDao inventoryDao;
 
-    public GameStateDaoJdbc(DataSource dataSource, PlayerDao playerDao){
+    public GameStateDaoJdbc(DataSource dataSource, PlayerDao playerDao, InventoryDao inventoryDao){
         this.dataSource = dataSource;
         this.playerDao = playerDao;
+        this.inventoryDao = inventoryDao;
     }
     @Override
     public void add(GameState state) {
@@ -24,7 +26,6 @@ public class GameStateDaoJdbc implements GameStateDao {
             String sql = "INSERT INTO game_state (current_map,  player_id) VALUES (?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1,state.getCurrentMap());
-//            statement.setDate(2, state.getSavedAt());
             statement.setInt(2, state.getPlayer().getId());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -64,7 +65,8 @@ public class GameStateDaoJdbc implements GameStateDao {
                 String currentMap = resultSet.getString(3);
                 Date savedAt = resultSet.getDate(4);
                 PlayerModel player = playerDao.get(playerId);
-                GameState gameState = new GameState(currentMap, player);
+                InventoryModel inventory = inventoryDao.getAll(playerId);
+                GameState gameState = new GameState(currentMap, savedAt, player, inventory);
                 return gameState;
         } catch (SQLException e){
             throw new RuntimeException(e);
@@ -83,7 +85,8 @@ public class GameStateDaoJdbc implements GameStateDao {
                 String currentMap = resultSet.getString(3);
                 Date savedAt = resultSet.getDate(4);
                 PlayerModel player = playerDao.get(playerId);
-                GameState state = new GameState(currentMap, player);
+                InventoryModel inventory = inventoryDao.getAll(playerId);
+                GameState state = new GameState(currentMap, savedAt, player, inventory);
                 state.setId(resultSet.getInt(1));
                 listOfGameStates.add(state);
             }
