@@ -20,7 +20,7 @@ public class SaveWindow extends AlertBox {
     }
 
     public void display() {
-        window.show();
+        window.showAndWait();
     }
 
     @Override
