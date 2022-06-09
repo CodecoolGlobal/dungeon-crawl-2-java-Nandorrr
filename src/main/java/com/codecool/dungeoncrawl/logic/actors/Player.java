@@ -22,7 +22,7 @@ public class Player extends Actor {
 
     private boolean movingToNextMap = false;
 
-    private final List<Item> inventory;
+    private List<Item> inventory;
 
     public Player(Cell cell, String name, int health, int damage, int armor, List<Item> inventory) {
         super(cell);
@@ -194,5 +194,9 @@ public class Player extends Actor {
 
     public boolean movingToNextMap() {
         return this.movingToNextMap;
+    }
+
+    public void setInventory(List<Item> inventory){
+        this.inventory = inventory;
     }
 }
