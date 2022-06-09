@@ -57,4 +57,88 @@ public class GameMap {
     public int getHeight() {
         return height;
     }
+
+
+    public String serializeMap(){
+        StringBuilder mapToString = new StringBuilder(String.format("%d %d\n", width, height));
+        for (int h=0; h<height;h++){
+            for (int w=0; w<width;w++){
+                Cell cell= cells[w][h];
+                if (cell.getActor() != null){
+                    switch (cell.getActor().getTileName()){
+                        case "player":
+                            mapToString.append("@");
+                            break;
+                        case "ghost":
+                            mapToString.append("g");
+                            break;
+                        case "ogre":
+                            mapToString.append("o");
+                            break;
+                        case "scorpion":
+                            mapToString.append("i");
+                            break;
+                        case "skeleton":
+                            mapToString.append("s");
+                            break;
+                    }
+                } else if (cell.getItem() != null) {
+                    switch (cell.getItem().getTileName()){
+                        case "chest plate":
+                            mapToString.append("p");
+                            break;
+                        case "chest":
+                            mapToString.append("b");
+                            break;
+                        case "coin":
+                            mapToString.append("c");
+                            break;
+                        case "jewel":
+                            mapToString.append("j");
+                            break;
+                        case "key":
+                            mapToString.append("k");
+                            break;
+                        case "health potion":
+                            mapToString.append("h");
+                            break;
+                        case "mana potion":
+                            mapToString.append("m");
+                            break;
+                        case "sword":
+                            mapToString.append("w");
+                            break;
+                    }
+                } else {
+                    switch (cell.getType().getTileName()){
+                        case "wall":
+                            mapToString.append("#");
+                            break;
+                        case "forest":
+                            mapToString.append("%");
+                            break;
+                        case "grass":
+                            mapToString.append("u");
+                            break;
+                        case "stairs":
+                            mapToString.append("*");
+                            break;
+                        case "closed_door":
+                            mapToString.append("d");
+                            break;
+                        case "floor":
+                            mapToString.append(".");
+                            break;
+                        default:
+                            mapToString.append(" ");
+                    }
+                }
+
+            }
+            mapToString.append(System.lineSeparator());
+        }
+            mapToString.append(System.lineSeparator());
+
+        return mapToString.toString();
+    }
 }
