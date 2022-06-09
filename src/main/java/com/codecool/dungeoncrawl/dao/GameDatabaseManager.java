@@ -19,12 +19,12 @@ public class GameDatabaseManager {
         DataSource dataSource = connect();
         playerDao = new PlayerDaoJdbc(dataSource);
         inventoryDao = new InventoryDaoJdbc(dataSource);
-        gameStateDao = new GameStateDaoJdbc(dataSource, playerDao);
+        gameStateDao = new GameStateDaoJdbc(dataSource, playerDao, inventoryDao);
     }
 
     public int saveGame(Player player) {
         PlayerModel playerModel = new PlayerModel(player);
-        GameState gameState = new GameState("first", playerModel);
+        GameState gameState = new GameState("/map2.txt", playerModel);
 
         playerDao.add(playerModel);
         gameStateDao.add(gameState);
@@ -39,6 +39,10 @@ public class GameDatabaseManager {
     public void updateSavedGame() {
         // TODO: implement method
         System.out.println("This was an existing player - update instead of save");
+    }
+
+    public GameState getGameStateById(int id) {
+        return gameStateDao.get(id);
     }
 
     public List<GameState> getAllGameStates() {
