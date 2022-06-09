@@ -1,5 +1,6 @@
 package com.codecool.dungeoncrawl.model;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.sql.Date;
 import java.util.List;
@@ -11,9 +12,15 @@ public class GameState extends BaseModel {
     private PlayerModel player;
     private InventoryModel inventory;
 
+    public GameState(String currentMap, Date savedAt, PlayerModel player, InventoryModel inventory) {
+        this.currentMap = currentMap;
+        this.savedAt = savedAt;
+        this.player = player;
+        this.inventory = inventory;
+    }
+
     public GameState(String currentMap, PlayerModel player) {
         this.currentMap = currentMap;
-//        this.savedAt = savedAt;
         this.player = player;
     }
 
