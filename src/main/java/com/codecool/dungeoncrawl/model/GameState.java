@@ -9,6 +9,7 @@ public class GameState extends BaseModel {
     private String currentMap;
     private List<String> discoveredMaps = new ArrayList<>();
     private PlayerModel player;
+    private InventoryModel inventory;
 
     public GameState(String currentMap, PlayerModel player) {
         this.currentMap = currentMap;
@@ -46,5 +47,13 @@ public class GameState extends BaseModel {
 
     public void setPlayer(PlayerModel player) {
         this.player = player;
+    }
+
+    public int getMapIndex() {
+        return Character.getNumericValue(this.currentMap.charAt(3))-1;
+    }
+
+    public InventoryModel getInventory() {
+        return inventory;
     }
 }

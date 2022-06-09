@@ -6,9 +6,9 @@ import java.nio.charset.StandardCharsets;
 
 public class WriteToFiles {
     public String fileCreater(String filename) throws IOException {
-        String filePath = "/Users/pohlnandor/Documents/GitHub/OOP Projects/dungeon-crawl-2-java-Nandorrr" +
-                "/src/main/resources/savedMaps/" + filename + "txt";
-        new File(filePath);
+        //new File(filePath);
+        String path = new File("src").getAbsolutePath() + "/main/resources/savedMaps";
+        String filePath = path + filename + ".txt";
 
         return filePath;
 
