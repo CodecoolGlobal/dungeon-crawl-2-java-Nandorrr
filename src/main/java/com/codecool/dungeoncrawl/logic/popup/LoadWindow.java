@@ -39,7 +39,6 @@ public class LoadWindow extends AlertBox {
 
     private void generateSavedGamesList(VBox layout) {
         List<GameState> gameStates = dbManager.getAllGameStates();
-        gameStates.forEach(state -> System.out.println(state.getSavedAt()));
         int counter = 1;
         RadioButton saveFileButton;
         for (GameState state: gameStates){
