@@ -6,6 +6,7 @@ import com.codecool.dungeoncrawl.logic.GameMap;
 import com.codecool.dungeoncrawl.logic.MapLoader;
 import com.codecool.dungeoncrawl.logic.actors.Actor;
 import com.codecool.dungeoncrawl.logic.actors.Player;
+import com.codecool.dungeoncrawl.logic.items.general.Key;
 import com.codecool.dungeoncrawl.logic.popup.*;
 import com.codecool.dungeoncrawl.model.GameState;
 import com.codecool.dungeoncrawl.model.InventoryModel;
@@ -44,11 +45,11 @@ public class Main extends Application  {
     private static final String NEW_GAME_LABEL = "new game";
     private static final String SAVE_LABEL = "save game";
     private static final String LOAD_LABEL = "load game";
-    private final List<String> mapFileNames = addMapNames();
+    private List<String> mapFilePaths = addMapPaths();
     private Timeline monsterTimeline = new Timeline();
     private int currentMapIndex = 0;
-    private String mapFileName = mapFileNames.get(currentMapIndex);
-    private GameMap map = MapLoader.loadMap(mapFileName);
+    private String mapFilePath = mapFilePaths.get(currentMapIndex);
+    private GameMap map = MapLoader.loadMap(mapFilePath);
     private  Player player = map.getPlayer();
     private Stage stage;
     private ScrollPane scrollPane = new ScrollPane();
@@ -68,7 +69,7 @@ public class Main extends Application  {
         launch(args);
     }
 
-    private List<String> addMapNames() {
+    private List<String> addMapPaths() {
         List<String> fileNames = new ArrayList<>();
         fileNames.add("/map1.txt");
         fileNames.add("/map2.txt");
@@ -76,15 +77,26 @@ public class Main extends Application  {
         return fileNames;
     }
 
+    private void addMapPathsAfterLoadGame(String mapPath) {
+        int mapNumber = Integer.parseInt(mapPath.split("savedMaps/")[1].substring(3, 4));
+        int currentMapIndex = mapNumber - 1;
+        List<String> fileNames = new ArrayList<>();
+        fileNames.add("/map1.txt");
+        fileNames.add("/map2.txt");
+        fileNames.add("/map3.txt");
+        fileNames.set(currentMapIndex , mapPath);
+        this.mapFilePaths = fileNames;
+    }
+
     @Override
-    public void start(Stage primaryStage) throws Exception {
+    public void start(Stage primaryStage) {
         setupDbManager();
         this.stage = primaryStage;
         initGameWindow();
         moveEnemiesOnMap();
     }
 
-    private void initGameWindow() throws SQLException{
+    private void initGameWindow() {
         borderPane = new BorderPane();
         GridPane inventoryBar = createInventoryBar();
         VBox menu = createSideMenuBar();
@@ -106,8 +118,10 @@ public class Main extends Application  {
                 onKeyPressed(keyEvent);
             } catch (SQLException | IOException e) {
                 try {
+                    monsterTimeline.stop();
                     throw new SQLException(e);
                 } catch (SQLException ex) {
+                    monsterTimeline.stop();
                     throw new RuntimeException(ex);
                 }
             }
@@ -122,7 +136,7 @@ public class Main extends Application  {
     }
 
     private void initScrollPane() {
-        scrollPane.pannableProperty().set(true);
+        scrollPane.setStyle("-fx-border-color:blue;");
         scrollPane.setContent(canvas);
 
         scrollPane.hbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
@@ -153,8 +167,8 @@ public class Main extends Application  {
 
     private void initNextMap() {
         currentMapIndex++;
-        mapFileName = mapFileNames.get(currentMapIndex);
-        map = MapLoader.loadMap(mapFileName);
+        mapFilePath = mapFilePaths.get(currentMapIndex);
+        map = MapLoader.loadMap(mapFilePath);
 
         final Cell cell = map.getPlayer().getCell();
         player.setCell(cell);
@@ -164,11 +178,9 @@ public class Main extends Application  {
         WORLD_SIZE_Y = map.getHeight() * Tiles.TILE_WIDTH;
 
         canvas = new Canvas(WORLD_SIZE_X, WORLD_SIZE_Y);
-
         context = canvas.getGraphicsContext2D();
 
         scrollPane = new ScrollPane();
-
         initScrollPane();
 
         borderPane.setCenter(scrollPane);
@@ -207,31 +219,80 @@ public class Main extends Application  {
     private void addButtonEventListener(Button button) {
         if (button.getText().equalsIgnoreCase(QUIT_LABEL)) {
             button.setOnAction(e -> {
-                openAlertBox(QUIT_LABEL);
+                try {
+                    openAlertBox(QUIT_LABEL);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
         } else if (button.getText().equalsIgnoreCase(CONTROLS_LABEL)) {
             button.setOnAction(e -> {
-                openAlertBox(CONTROLS_LABEL);
+                try {
+                    openAlertBox(CONTROLS_LABEL);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
         } else if (button.getText().equalsIgnoreCase(SAVE_LABEL)) {
             button.setOnAction(e -> {
-                openAlertBox(SAVE_LABEL);
+                try {
+                    openAlertBox(SAVE_LABEL);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
         } else if (button.getText().equalsIgnoreCase(LOAD_LABEL)) {
             button.setOnAction(e -> {
-                openAlertBox(LOAD_LABEL);
+                try {
+                    openAlertBox(LOAD_LABEL);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
             });
         }
     }
 
-    private void openAlertBox(String boxType) {
+    private void openAlertBox(String boxType) throws IOException {
         borderPane.requestFocus();
         monsterTimeline.pause();
         AlertBox alertBox = createAlertBox(boxType);
-        if (boxType == LOAD_LABEL) {
+
+        if (boxType.equals(SAVE_LABEL)) {
+            boolean wantsToSave = alertBox.displayAndReturnReply();
+
+            if (wantsToSave) {
+                WriteToFiles writeToFiles = new WriteToFiles();
+                CurrentTime currentTime = new CurrentTime();
+                String date = currentTime.getCurrentDateInString();
+
+                String filename;
+
+                if (mapFilePath.contains("resources")) {
+                    filename = mapFilePath.split("savedMaps")[1].substring(0, 5) + "-" + date;
+                } else {
+                    filename = mapFilePath.substring(0, 5) + "-" + date;
+                }
+
+                String filePath = writeToFiles.fileCreater(filename);
+                String mapStringVersion = map.serializeMap();
+                writeToFiles.writeInTheFile(mapStringVersion, filePath);
+
+                if (!dbManager.doesPlayerExist(player.getName())) {
+                    int playerId = dbManager.saveGame(player, filePath);
+                    player.setId(playerId);
+                    System.out.println("Save was finished");
+                } else {
+                    int playerId = dbManager.getPlayerIdByName(player.getName());
+                    player.setId(playerId);
+                    dbManager.saveGameForExistingPlayer(player, filePath);
+                }
+            }
+
+        } else if (boxType.equals(LOAD_LABEL)) {
             int gameStateId = alertBox.displayAndReturn();
             GameState chosenGameState = dbManager.getGameStateById(gameStateId);
             if (chosenGameState != null) loadGame(chosenGameState);
+
         } else {
             alertBox.display();
         }
@@ -249,7 +310,7 @@ public class Main extends Application  {
                 return new ControlsWindow("Controls", "KEY BINDINGS", "controlsWindow");
             case SAVE_LABEL:
                 return new SaveWindow("Save Game", "To save your current game state, click SAVE.",
-                        "saveWindow", dbManager, player);
+                        "saveWindow");
             case LOAD_LABEL:
                 return new LoadWindow("Load Game", "Choose a game state you wish to load: ",
                         "loadWindow", dbManager);
@@ -297,43 +358,34 @@ public class Main extends Application  {
     private void onKeyPressed(KeyEvent keyEvent) throws SQLException, IOException {
         final Cell lastPlayerLocation =  player.getCell();
 
-        //Nandi's dirt was left here. Shame on him.
-        GameDatabaseManager dbManager = new GameDatabaseManager();
-        WriteToFiles writeToFiles = new WriteToFiles();
-        CurrentTime currentTime= new CurrentTime();
-        String date = currentTime.getCurrentDateInString();
-
-
-        String filename = mapFileName + date;
-        String filePath = writeToFiles.fileCreater(filename);
         if (player.isAlive()) {
             switch (keyEvent.getCode()) {
                 case W:
                     player.move(0, -1);
                     refresh();
                     if (lastPlayerLocation != player.getCell()) {
-                        scrollPane.setVvalue(scrollPane.getVvalue() - 1.6 / map.getHeight());
+                        scrollPane.setVvalue(scrollPane.getVvalue() - 1.3 / map.getHeight());
                     }
                     break;
                 case S:
                     player.move(0, 1);
                     refresh();
                     if (lastPlayerLocation != player.getCell()) {
-                        scrollPane.setVvalue(scrollPane.getVvalue() + 1.6 / map.getHeight());
+                        scrollPane.setVvalue(scrollPane.getVvalue() + 1.3 / map.getHeight());
                     }
                     break;
                 case A:
                     player.move(-1, 0);
                     refresh();
                     if (lastPlayerLocation != player.getCell()) {
-                        scrollPane.setHvalue(scrollPane.getHvalue() - 1.6 / map.getWidth());
+                        scrollPane.setHvalue(scrollPane.getHvalue() - 1.3 / map.getWidth());
                     }
                     break;
                 case D:
                     player.move(1,0);
                     refresh();
                     if (lastPlayerLocation != player.getCell()) {
-                        scrollPane.setHvalue(scrollPane.getHvalue() + 1.6 / map.getWidth());
+                        scrollPane.setHvalue(scrollPane.getHvalue() + 1.3 / map.getWidth());
                     }
                     break;
                 case F:
@@ -342,15 +394,6 @@ public class Main extends Application  {
                     break;
                 case SPACE:
                     player.hitActor();
-                    refresh();
-                    break;
-
-                case U:
-                    dbManager.setup();
-                    dbManager.saveGame(player);
-
-                    writeToFiles.writeInTheFile(map.serializeMap(), filePath);
-                    System.out.println("Save was finished");
                     refresh();
                     break;
             }
@@ -414,42 +457,40 @@ public class Main extends Application  {
 
     private void loadGame(GameState gameState) {
         currentMapIndex = gameState.getMapIndex();
-        mapFileName = gameState.getCurrentMap();
-        map = MapLoader.loadMap(mapFileName);
-        final Cell cell = map.getPlayer().getCell();
-        player = PlayerModelToPlayer(gameState.getPlayer(), cell, gameState.getInventory());
+        mapFilePath = gameState.getCurrentMap();
+        addMapPathsAfterLoadGame(mapFilePath);
+        map = MapLoader.loadMap(mapFilePath);
 
+        Cell cell = map.getPlayer().getCell();
+        player = PlayerModelToPlayer(gameState.getPlayer(), cell, gameState.getInventory());
         player.setCell(cell);
         map.setPlayer(player);
+        if (player.getInventory().stream().anyMatch(item -> item instanceof Key)) player.setHasKey();
 
         WORLD_SIZE_X = map.getWidth() * Tiles.TILE_WIDTH;
         WORLD_SIZE_Y = map.getHeight() * Tiles.TILE_WIDTH;
 
         canvas = new Canvas(WORLD_SIZE_X, WORLD_SIZE_Y);
-
         context = canvas.getGraphicsContext2D();
 
         scrollPane = new ScrollPane();
-
-        initScrollPane();
-
         borderPane.setCenter(scrollPane);
+        initScrollPane();
+        scrollPane.setVvalue((1.3 / map.getHeight() * player.getY()));
+        scrollPane.setHvalue((1.3 / map.getWidth() * player.getX()));
 
         player.setMovingToNextMap(false);
 
         monsterTimeline = new Timeline();
-
         moveEnemiesOnMap();
 
         borderPane.requestFocus();
 
         refresh();
-
     }
 
     private Player PlayerModelToPlayer(PlayerModel playerModel, Cell cell, InventoryModel inventory){
         return new Player(cell, playerModel.getPlayerName(), playerModel.getHealth(), playerModel.getDamage(), playerModel.getArmor(), inventory.getInventoryItems());
-
     }
 
 }
