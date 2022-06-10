@@ -40,6 +40,11 @@ public abstract class AlertBox {
         return 0;
     }
 
+    public boolean displayAndReturnReply() {
+        window.showAndWait();
+        return false;
+    }
+
     protected Stage createPopUp(String title) {
         Stage window = new Stage();
 

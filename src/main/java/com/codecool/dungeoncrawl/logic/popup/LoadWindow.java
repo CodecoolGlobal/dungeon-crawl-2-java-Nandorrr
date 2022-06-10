@@ -11,7 +11,6 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -20,7 +19,6 @@ public class LoadWindow extends AlertBox {
     private VBox mainContainer;
     private int saveId;
     private Label chosenGame;
-    private final List<String> saveNames = new ArrayList<>();
 
     private final GameDatabaseManager dbManager;
     private static final ToggleGroup group = new ToggleGroup();
@@ -45,16 +43,14 @@ public class LoadWindow extends AlertBox {
             saveFileButton = new RadioButton();
             saveFileButton.getStyleClass().add("saveFileButton");
             String time = new SimpleDateFormat("yyyy/MM/dd HH:mm").format(state.getSavedAt());
-            saveNames.add(time);
             saveFileButton.setText(
-                    "#" + counter + " | "
-                            + time);
+                    "#" + counter + " | " + time + " | " + state.getPlayer().getPlayerName());
             saveFileButton.setFont(Font.font("Verdana"));
             saveFileButton.getStyleClass().add("savedGameBtn");
             saveFileButton.setToggleGroup(group);
             layout.getChildren().add(saveFileButton);
             saveFileButton.setOnAction( e -> {
-                chosenGame.setText(time);
+                chosenGame.setText(time + " | " + state.getPlayer().getPlayerName());
                 saveId = state.getId();
             });
             counter++;
@@ -76,7 +72,7 @@ public class LoadWindow extends AlertBox {
         mainContainer.setMinSize(500, 600);
         mainContainer.setAlignment(Pos.CENTER);
 
-        chosenGame = new Label("test");
+        chosenGame = new Label("");
 
         generateTopLabel();
         addWindowElements();
