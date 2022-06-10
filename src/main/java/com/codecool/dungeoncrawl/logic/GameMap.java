@@ -120,10 +120,16 @@ public class GameMap {
                         case "grass":
                             mapToString.append("u");
                             break;
-                        case "stairs":
+                        case "stairs down":
                             mapToString.append("*");
                             break;
-                        case "closed_door":
+                        case "open chest":
+                            mapToString.append("B");
+                            break;
+                        case "open door":
+                            mapToString.append("D");
+                            break;
+                        case "closed door":
                             mapToString.append("d");
                             break;
                         case "floor":
