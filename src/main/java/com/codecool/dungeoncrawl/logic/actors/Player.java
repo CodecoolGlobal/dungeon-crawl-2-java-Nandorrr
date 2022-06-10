@@ -16,9 +16,11 @@ import java.util.Set;
 
 public class Player extends Actor {
 
+    private int id;
+
     private String name;
 
-    private static final ActorStats STATS = new ActorStats(200, 10, 20);
+    private static final ActorStats STATS = new ActorStats(2000, 10, 20);
 
     private boolean movingToNextMap = false;
 
@@ -26,6 +28,7 @@ public class Player extends Actor {
 
     public Player(Cell cell, String name, int health, int damage, int armor, List<Item> inventory) {
         super(cell);
+        this.id = 0;
         this.name = name;
         this.health = health;
         this.damage = damage;
@@ -176,6 +179,10 @@ public class Player extends Actor {
         inventory.removeIf(item -> item.getTileName().equalsIgnoreCase(itemName));
     }
 
+    public void setHasKey() {
+        this.hasKey = true;
+    }
+
     private void removeKey() {
         this.hasKey = false;
     }
@@ -198,5 +205,13 @@ public class Player extends Actor {
 
     public void setInventory(List<Item> inventory){
         this.inventory = inventory;
+    }
+
+    public int getId(){
+        return id;
+    }
+
+    public void setId(int id){
+        this.id = id;
     }
 }
