@@ -11,9 +11,9 @@ import java.util.List;
 
 public class GameStateDaoJdbc implements GameStateDao {
 
-    private  DataSource dataSource;
-    private PlayerDao playerDao;
-    private InventoryDao inventoryDao;
+    private final DataSource dataSource;
+    private final PlayerDao playerDao;
+    private final InventoryDao inventoryDao;
 
     public GameStateDaoJdbc(DataSource dataSource, PlayerDao playerDao, InventoryDao inventoryDao){
         this.dataSource = dataSource;
@@ -42,7 +42,7 @@ public class GameStateDaoJdbc implements GameStateDao {
             String sql = "UPDATE game_state SET current_map = ?, saved_at = ? WHERE id = ?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, state.getCurrentMap());
-            st.setDate(2, state.getSavedAt());
+            st.setTimestamp(2, state.getSavedAt());
             st.executeUpdate();
 
         } catch (SQLException e){
@@ -63,10 +63,11 @@ public class GameStateDaoJdbc implements GameStateDao {
                 int gameStateId = resultSet.getInt(1);
                 int playerId = resultSet.getInt(2);
                 String currentMap = resultSet.getString(3);
-                Date savedAt = resultSet.getDate(4);
+                Timestamp savedAt = resultSet.getTimestamp(4);
                 PlayerModel player = playerDao.get(playerId);
-                InventoryModel inventory = inventoryDao.getAll(playerId);
+                InventoryModel inventory = inventoryDao.getAll(playerId, gameStateId);
                 GameState gameState = new GameState(currentMap, savedAt, player, inventory);
+                gameState.setId(gameStateId);
                 return gameState;
         } catch (SQLException e){
             throw new RuntimeException(e);
@@ -81,11 +82,12 @@ public class GameStateDaoJdbc implements GameStateDao {
             List<GameState> listOfGameStates = new ArrayList<>();
 
             while(resultSet.next()) {
+                int gameStateId = resultSet.getInt(1);
                 int playerId = resultSet.getInt(2);
                 String currentMap = resultSet.getString(3);
-                Date savedAt = resultSet.getDate(4);
+                Timestamp savedAt = resultSet.getTimestamp(4);
                 PlayerModel player = playerDao.get(playerId);
-                InventoryModel inventory = inventoryDao.getAll(playerId);
+                InventoryModel inventory = inventoryDao.getAll(playerId, gameStateId);
                 GameState state = new GameState(currentMap, savedAt, player, inventory);
                 state.setId(resultSet.getInt(1));
                 listOfGameStates.add(state);

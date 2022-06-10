@@ -22,23 +22,43 @@ public class GameDatabaseManager {
         gameStateDao = new GameStateDaoJdbc(dataSource, playerDao, inventoryDao);
     }
 
-    public int saveGame(Player player) {
+    public int saveGame(Player player, String currentMapPath) {
         PlayerModel playerModel = new PlayerModel(player);
-        GameState gameState = new GameState("/map2.txt", playerModel);
+        GameState gameState = new GameState(currentMapPath, playerModel);
 
         playerDao.add(playerModel);
         gameStateDao.add(gameState);
 
         int playerId = playerModel.getId();
+        int gameStateId = gameState.getId();
         List<Item> inventory = player.getInventory();
-        inventory.forEach(item -> inventoryDao.add(item, playerId));
+        inventory.forEach(item -> inventoryDao.add(item, playerId, gameStateId));
 
         return playerId;
     }
 
-    public void updateSavedGame() {
-        // TODO: implement method
+    public int saveGameForExistingPlayer(Player player, String currentMapPath) {
         System.out.println("This was an existing player - update instead of save");
+
+        PlayerModel playerModel = new PlayerModel(player);
+        playerModel.setId(player.getId());
+        GameState gameState = new GameState(currentMapPath, playerModel);
+
+        playerDao.update(playerModel);
+        gameStateDao.add(gameState);
+
+        int playerId = playerDao.getPlayerIdByName(player.getName());
+        playerModel.setId(playerId);
+        int gameStateId = gameState.getId();
+
+        List<Item> inventory = player.getInventory();
+        inventory.forEach(item -> inventoryDao.add(item, playerId, gameStateId));
+
+        return playerId;
+    }
+
+    public int getPlayerIdByName(String playerName) {
+        return playerDao.getPlayerIdByName(playerName);
     }
 
     public GameState getGameStateById(int id) {
@@ -52,7 +72,7 @@ public class GameDatabaseManager {
     public boolean doesPlayerExist(String playerName) {
         List<PlayerModel> players = playerDao.getAll();
 
-        for (PlayerModel player : players) {
+        for (PlayerModel player: players) {
             if (player.getPlayerName().equals(playerName)) {
                 return true;
             }
