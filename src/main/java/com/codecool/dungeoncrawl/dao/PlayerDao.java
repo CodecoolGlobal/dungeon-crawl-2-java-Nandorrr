@@ -9,4 +9,5 @@ public interface PlayerDao {
     int update(PlayerModel player);
     PlayerModel get(int id);
     List<PlayerModel> getAll();
+    int getPlayerIdByName(String playerName);
 }

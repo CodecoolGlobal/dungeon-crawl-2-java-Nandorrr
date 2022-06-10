@@ -12,17 +12,18 @@ CREATE TABLE player (
 );
 
 
-CREATE TABLE inventory (
-    id serial PRIMARY KEY,
-    player_id INTEGER REFERENCES player(id),
-    item_name text NOT NULL
-);
-
 CREATE TABLE game_state (
     id serial PRIMARY KEY,
     current_map text NOT NULL,
     saved_at timestamp without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     player_id integer NOT NULL
+);
+
+CREATE TABLE inventory (
+                           id serial PRIMARY KEY,
+                           player_id INTEGER REFERENCES player(id),
+                           game_state_id INTEGER REFERENCES game_state(id),
+                           item_name text NOT NULL
 );
 
 
@@ -31,4 +32,5 @@ ALTER TABLE ONLY game_state
 
 
 ALTER TABLE ONLY inventory
-    ADD CONSTRAINT fk_player_id FOREIGN KEY (player_id) REFERENCES player(id);
+    ADD CONSTRAINT fk_player_id FOREIGN KEY (player_id) REFERENCES player(id),
+    ADD CONSTRAINT fk_game_state_id FOREIGN KEY (game_state_id) REFERENCES game_state(id);;

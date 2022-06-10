@@ -23,15 +23,24 @@ public class Tiles {
     }
 
     static {
+        // floor types
         tileMap.put("empty", new Tile(0, 0));
+        tileMap.put("floor", new Tile(2, 0));
+        tileMap.put("stairs down", new Tile(4, 6));
         tileMap.put("wall", new Tile(10, 17));
         tileMap.put("forest", new Tile(3, 2));
-        tileMap.put("stairs down", new Tile(4, 6));
-        tileMap.put("floor", new Tile(2, 0));
-        tileMap.put("player", new Tile(27, 0));
-        tileMap.put("skeleton", new Tile(29, 6));
+        tileMap.put("grass", new Tile(5,0));
         tileMap.put("closed door", new Tile(3, 3));
         tileMap.put("open door", new Tile(4, 3));
+
+        // actors
+        tileMap.put("player", new Tile(27, 0));
+        tileMap.put("skeleton", new Tile(29, 6));
+        tileMap.put("ogre", new Tile(30, 6));
+        tileMap.put("scorpion", new Tile(24, 5));
+        tileMap.put("ghost", new Tile(27,6));
+
+        // items
         tileMap.put("key", new Tile(16, 23));
         tileMap.put("chest", new Tile(8, 6));
         tileMap.put("open chest", new Tile(9, 6));
@@ -41,10 +50,6 @@ public class Tiles {
         tileMap.put("health potion", new Tile(23, 22));
         tileMap.put("mana potion", new Tile(16, 25));
         tileMap.put("coin", new Tile(9, 25));
-        tileMap.put("ogre", new Tile(30, 6));
-        tileMap.put("scorpion", new Tile(24, 5));
-        tileMap.put("ghost", new Tile(27,6));
-        tileMap.put("grass", new Tile(5,0));
     }
 
     public static void drawTile(GraphicsContext context, Drawable d, int x, int y) {

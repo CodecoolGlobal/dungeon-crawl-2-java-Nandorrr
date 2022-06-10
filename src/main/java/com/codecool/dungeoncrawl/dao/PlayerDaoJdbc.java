@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlayerDaoJdbc implements PlayerDao {
-    private DataSource dataSource;
+    private final DataSource dataSource;
 
     public PlayerDaoJdbc(DataSource dataSource) {
         this.dataSource = dataSource;
@@ -36,7 +36,7 @@ public class PlayerDaoJdbc implements PlayerDao {
     @Override
     public int update(PlayerModel player) {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = " UPDATE player SET health = ?, armor = ?, damage = ? WHERE id = ?";
+            String sql = "UPDATE player SET health = ?, armor = ?, damage = ? WHERE id = ?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1,player.getHealth());
             st.setInt(2, player.getArmor());
@@ -53,7 +53,7 @@ public class PlayerDaoJdbc implements PlayerDao {
     @Override
     public PlayerModel get(int id) {
         try (Connection conn = dataSource.getConnection()) {
-            String sql = "SELECT player_name, health, armor, damage FROM player WHERE id = ?";
+            String sql = "SELECT player_name, health, damage, armor FROM player WHERE id = ?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setInt(1, id);
             ResultSet rs = st.executeQuery();
@@ -82,6 +82,21 @@ public class PlayerDaoJdbc implements PlayerDao {
             return result;
         } catch (SQLException e) {
             throw new RuntimeException("Error while reading all players data", e);
+        }
+    }
+
+    public int getPlayerIdByName(String playerName) {
+        try (Connection conn = dataSource.getConnection()) {
+            String sql = "SELECT id FROM player WHERE player_name ILIKE ?";
+            PreparedStatement st = conn.prepareStatement(sql);
+            st.setString(1, playerName);
+            ResultSet rs = st.executeQuery();
+            if (!rs.next()) { // first row was not found == no data was returned by the query
+                return 0;
+            }
+            return rs.getInt(1);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
 }

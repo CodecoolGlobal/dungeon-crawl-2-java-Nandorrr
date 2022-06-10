@@ -1,7 +1,7 @@
 package com.codecool.dungeoncrawl.dao;
 
-import com.codecool.dungeoncrawl.logic.actors.Player;
 import com.codecool.dungeoncrawl.model.GameState;
+import com.codecool.dungeoncrawl.model.InventoryModel;
 import com.codecool.dungeoncrawl.model.PlayerModel;
 
 import javax.sql.DataSource;
@@ -10,13 +10,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameStateDaoJdbc implements GameStateDao {
-    private  DataSource dataSource;
 
-    private PlayerDao playerDao;
+    private final DataSource dataSource;
+    private final PlayerDao playerDao;
+    private final InventoryDao inventoryDao;
 
-    public GameStateDaoJdbc(DataSource dataSource, PlayerDao playerDao){
+    public GameStateDaoJdbc(DataSource dataSource, PlayerDao playerDao, InventoryDao inventoryDao){
         this.dataSource = dataSource;
         this.playerDao = playerDao;
+        this.inventoryDao = inventoryDao;
     }
     @Override
     public void add(GameState state) {
@@ -24,7 +26,6 @@ public class GameStateDaoJdbc implements GameStateDao {
             String sql = "INSERT INTO game_state (current_map,  player_id) VALUES (?, ?)";
             PreparedStatement statement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             statement.setString(1,state.getCurrentMap());
-//            statement.setDate(2, state.getSavedAt());
             statement.setInt(2, state.getPlayer().getId());
             statement.executeUpdate();
             ResultSet resultSet = statement.getGeneratedKeys();
@@ -41,7 +42,7 @@ public class GameStateDaoJdbc implements GameStateDao {
             String sql = "UPDATE game_state SET current_map = ?, saved_at = ? WHERE id = ?";
             PreparedStatement st = conn.prepareStatement(sql);
             st.setString(1, state.getCurrentMap());
-            st.setDate(2, state.getSavedAt());
+            st.setTimestamp(2, state.getSavedAt());
             st.executeUpdate();
 
         } catch (SQLException e){
@@ -62,9 +63,11 @@ public class GameStateDaoJdbc implements GameStateDao {
                 int gameStateId = resultSet.getInt(1);
                 int playerId = resultSet.getInt(2);
                 String currentMap = resultSet.getString(3);
-                Date savedAt = resultSet.getDate(4);
+                Timestamp savedAt = resultSet.getTimestamp(4);
                 PlayerModel player = playerDao.get(playerId);
-                GameState gameState = new GameState(currentMap, player);
+                InventoryModel inventory = inventoryDao.getAll(playerId, gameStateId);
+                GameState gameState = new GameState(currentMap, savedAt, player, inventory);
+                gameState.setId(gameStateId);
                 return gameState;
         } catch (SQLException e){
             throw new RuntimeException(e);
@@ -79,11 +82,13 @@ public class GameStateDaoJdbc implements GameStateDao {
             List<GameState> listOfGameStates = new ArrayList<>();
 
             while(resultSet.next()) {
+                int gameStateId = resultSet.getInt(1);
                 int playerId = resultSet.getInt(2);
                 String currentMap = resultSet.getString(3);
-                Date savedAt = resultSet.getDate(4);
+                Timestamp savedAt = resultSet.getTimestamp(4);
                 PlayerModel player = playerDao.get(playerId);
-                GameState state = new GameState(currentMap, player);
+                InventoryModel inventory = inventoryDao.getAll(playerId, gameStateId);
+                GameState state = new GameState(currentMap, savedAt, player, inventory);
                 state.setId(resultSet.getInt(1));
                 listOfGameStates.add(state);
             }

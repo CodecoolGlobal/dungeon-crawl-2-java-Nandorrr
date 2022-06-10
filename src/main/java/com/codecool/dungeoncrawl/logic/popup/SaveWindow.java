@@ -1,7 +1,5 @@
 package com.codecool.dungeoncrawl.logic.popup;
 
-import com.codecool.dungeoncrawl.dao.GameDatabaseManager;
-import com.codecool.dungeoncrawl.logic.actors.Player;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -9,18 +7,20 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 public class SaveWindow extends AlertBox {
+    private boolean wantsToSave;
 
-    private final GameDatabaseManager dbManager;
-    private final Player player;
-
-    public SaveWindow(String title, String message, String className, GameDatabaseManager dbManager, Player player) {
+    public SaveWindow(String title, String message, String className) {
         super(title, message, className);
-        this.dbManager = dbManager;
-        this.player = player;
     }
 
     public void display() {
-        window.show();
+        window.showAndWait();
+    }
+
+    @Override
+    public boolean displayAndReturnReply() {
+        window.showAndWait();
+        return wantsToSave;
     }
 
     @Override
@@ -38,15 +38,12 @@ public class SaveWindow extends AlertBox {
         Button cancelButton = new Button("CANCEL");
 
         saveButton.setOnAction(e -> {
-            if (dbManager.doesPlayerExist(player.getName())) {
-                dbManager.updateSavedGame();
-            } else {
-                dbManager.saveGame(player);
-            }
+            wantsToSave = true;
             this.window.close();
         });
 
         cancelButton.setOnAction(e -> {
+            wantsToSave = false;
             this.window.close();
         });
 

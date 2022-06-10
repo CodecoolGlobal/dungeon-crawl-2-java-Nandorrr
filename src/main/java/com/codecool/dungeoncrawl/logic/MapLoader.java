@@ -16,7 +16,11 @@ import java.util.Scanner;
 public class MapLoader {
 
     public static GameMap loadMap(String mapFileName) {
-        final InputStream is = MapLoader.class.getResourceAsStream(mapFileName);
+        String mapFilePath = mapFileName;
+        if (mapFileName.contains("resources")) {
+            mapFilePath = mapFileName.split("resources")[1];
+        }
+        final InputStream is = MapLoader.class.getResourceAsStream(mapFilePath);
         final Scanner scanner = new Scanner(is);
         final int width = scanner.nextInt();
         final int height = scanner.nextInt();
@@ -48,6 +52,9 @@ public class MapLoader {
                         case 'd':
                             cell.setType(CellType.CLOSED_DOOR);
                             break;
+                        case 'D':
+                            cell.setType(CellType.OPEN_DOOR);
+                            break;
                         case '.':
                             cell.setType(CellType.FLOOR);
                             break;
@@ -66,6 +73,9 @@ public class MapLoader {
                         case 'b':
                             cell.setType(CellType.FLOOR);
                             new Chest(cell);
+                            break;
+                        case 'B':
+                            cell.setType(CellType.OPEN_CHEST);
                             break;
                         case 'h':
                             cell.setType(CellType.FLOOR);
