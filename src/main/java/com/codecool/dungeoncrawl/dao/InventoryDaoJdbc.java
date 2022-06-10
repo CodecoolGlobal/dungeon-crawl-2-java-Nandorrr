@@ -25,12 +25,13 @@ public class InventoryDaoJdbc implements InventoryDao {
     }
 
     @Override
-    public void add(Item item, int playerId) {
+    public void add(Item item, int playerId, int gameStateId) {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "INSERT INTO inventory (player_id, item_name) VALUES (?, ?)";
+            String sql = "INSERT INTO inventory (player_id, game_state_id, item_name) VALUES (?, ?, ?)";
             PreparedStatement prepStat = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             prepStat.setInt(1, playerId);
-            prepStat.setString(2, item.getTileName());
+            prepStat.setInt(2, gameStateId);
+            prepStat.setString(3, item.getTileName());
             prepStat.executeUpdate();
             ResultSet resultSet = prepStat.getGeneratedKeys();
             resultSet.next();
@@ -40,23 +41,12 @@ public class InventoryDaoJdbc implements InventoryDao {
     }
 
     @Override
-    public void delete(int playerId) {
+    public InventoryModel getAll(int playerId, int gameStateId) {
         try (Connection connection = dataSource.getConnection()) {
-            String sql = "DELETE FROM inventory WHERE player_id = ?";
+            String sql = "SELECT item_name FROM inventory WHERE player_id = ? AND game_state_id = ?";
             PreparedStatement prepStat = connection.prepareStatement(sql);
             prepStat.setInt(1, playerId);
-            prepStat.executeQuery(sql);
-        } catch (SQLException exception) {
-            throw new RuntimeException(exception);
-        }
-    }
-
-    @Override
-    public InventoryModel getAll(int playerId) {
-        try (Connection connection = dataSource.getConnection()) {
-            String sql = "SELECT item_name FROM inventory WHERE player_id = ?";
-            PreparedStatement prepStat = connection.prepareStatement(sql);
-            prepStat.setInt(1, playerId);
+            prepStat.setInt(2, gameStateId);
             ResultSet resultSet = prepStat.executeQuery();
 
             List<Item> inventoryItems = getItems(resultSet);
